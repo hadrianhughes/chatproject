@@ -15,12 +15,14 @@ export default class App extends React.Component
             messageLimit: 200,
             messages: [],
             filter: '',
-            filters: []
+            filters: [],
+            words: []
         };
         
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.addMessage = this.addMessage.bind(this);
+        this.setWords = this.setWords.bind(this);
     }
     
     componentDidMount()
@@ -61,6 +63,7 @@ export default class App extends React.Component
         socket.on('newMsg', function(msg, user)
         {
             this.addMessage(user, msg);
+            this.setWords(this.state.messages);
         }.bind(this));
     }
     
@@ -94,6 +97,32 @@ export default class App extends React.Component
         });
     }
     
+    setWords(messages)
+    {
+        let words = [];
+        for(let i = 0;i < messages.length;i++)
+        {
+            const cleaned = messages[i].value.replace(/,|\.|\n|\r|\t/g, '');
+            const parts = cleaned.split(' ');
+            words = words.concat(parts);
+        }
+        
+        for(let i = 0;i < words.length;i++)
+        {
+            for(let j = i + 1;j < words.length;j++)
+            {
+                if(words[i] == words[j])
+                {
+                    words.splice(i, 1);
+                }
+            }
+        }
+        
+        this.setState({
+            words: words
+        });
+    }
+    
     render()
     {
         const remainingChars = this.state.messageLimit - this.state.message.length;
@@ -111,7 +140,7 @@ export default class App extends React.Component
             <table className="max-width max-height">
                 <tbody>
                     <tr>
-                        <OptionsColumn filters={this.state.filters} />
+                        <OptionsColumn filters={this.state.filters} words={this.state.words} />
                         <td id="chat-column">
                             <MessageList list={this.state.messages} />
                             <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} />

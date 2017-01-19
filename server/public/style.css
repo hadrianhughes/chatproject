@@ -36,6 +36,26 @@ td
     text-align: center;
 }
 
+#options-column table
+{
+    width: 100%;
+    height: 8vh;
+}
+
+#options-column td
+{
+    width: 50%;
+}
+
+.canvas-button
+{
+    background-color: #ededed;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
 #chat-column
 {
     width: 75%;

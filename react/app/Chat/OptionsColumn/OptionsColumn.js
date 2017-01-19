@@ -8,7 +8,15 @@ export default class OptionsColumn extends React.Component
     {
         return(
             <td id="options-column">
-                {this.props.filters.length > 0 ? <OptionsCanvas filters={this.props.filters} /> : null}
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><button className="canvas-button">Recommended</button></td>
+                            <td><button className="canvas-button">Nearby</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                {this.props.filters.length > 0 ? <OptionsCanvas filters={this.props.filters} words={this.props.words} /> : null}
             </td>
         );
     }

@@ -12,6 +12,7 @@ let messages = [];
 let connections = [];
 let filters = [];
 let trends = [];
+const MAX_TRENDS = 1000;
 
 //Keep filters up to date with messages
 trendTimer();
@@ -21,7 +22,10 @@ function trendTimer()
     {
         callGetTrends(function()
         {
-            trendTimer();
+            trashTrends(function()
+            {
+                trendTimer();
+            });
         });
     }, 10*1000);
 }
@@ -160,8 +164,8 @@ io.on('connection', function(socket)
         for(let i in io.sockets.adapter.rooms)
         {
             //Make sure room is filter
-            if(filters.indexOf(i) > -1)
-            {
+            /*if(filters.indexOf(i) > -1)
+            {*/
                 //For each socket connected to the current room
                 for(let j in io.sockets.adapter.rooms[i].sockets)
                 {
@@ -205,7 +209,7 @@ io.on('connection', function(socket)
                         }
                     }
                 }
-            }
+            //}
         }
         
         
@@ -256,6 +260,35 @@ function callGetTrends(callback)
     });
 }
 
+function trashTrends(callback)
+{
+    if(trends.length > MAX_TRENDS)
+    {
+        //Sort into decreasing order
+        for(let i = 0;i < trends.length;i++)
+        {
+            for(let j = 0;j < trends.length - 1;j++)
+            {
+                if(trends[j].count < trends[j + 1].count)
+                {
+                    const trendTemp = trends[j];
+                    trends[j] = trends[j + 1];
+                    trends[j + 1] = trendTemp;
+                }
+            }
+        }
+        
+        //Remove low count trends
+        const remainder = trends.length - MAX_TRENDS;
+        for(let i = 0;i < remainder;i++)
+        {
+            trends.shift();
+        }
+    }
+    
+    callback();
+}
+
 //Start server
 app.set('port', 3000);
 const server = http.listen(app.get('port'), function()
@@ -264,7 +297,7 @@ const server = http.listen(app.get('port'), function()
     console.log('Waiting on port ' + port + '...');
 });
 
-//Set up database
+//Establish connection to database
 let database;
 MongoClient.connect('mongodb://localhost:27017/chatproject', function(err, db)
 {
