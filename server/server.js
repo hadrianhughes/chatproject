@@ -6,9 +6,25 @@ const MongoClient = require('mongodb').MongoClient;
 
 const Users = require('./modules/Users.js');
 const Chat = require('./modules/Chat.js');
+const Maintenance = require('./modules/Maintenance.js');
 
+let messages = [];
 let connections = [];
 let filters = [];
+let trends = [];
+
+//Keep filters up to date with messages
+trendTimer();
+function trendTimer()
+{
+    setTimeout(function()
+    {
+        callGetTrends(function()
+        {
+            trendTimer();
+        });
+    }, 10*1000);
+}
 
 io.on('connection', function(socket)
 {
@@ -74,6 +90,9 @@ io.on('connection', function(socket)
     {
         if(msg)
         {
+            messages.push(msg);
+            
+            //Default filter allows message to broadcast globally
             if(!filter) filter = 'default-filter';
             
             //Find username of user
@@ -222,6 +241,19 @@ function getDistance(lat1, long1, lat2, long2, callback)
     const d = R * c;
     
     callback(d);
+}
+
+function callGetTrends(callback)
+{
+    Maintenance.getTrends(messages, function(trendList)
+    {
+        Maintenance.mergeTrends(trends, trendList, function(newTrends)
+        {
+            trends = newTrends;
+            
+            callback();
+        });
+    });
 }
 
 //Start server
