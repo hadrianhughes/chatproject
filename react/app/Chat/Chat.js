@@ -79,9 +79,12 @@ export default class App extends React.Component
     {
         if(e.key === 'Enter')
         {
-            //Send message
-            socket.emit('newMsg', this.props.userId, this.state.filter, this.state.message);
-            this.setState({ message: '' });
+            if(this.state.message.length > 0)
+            {
+                //Send message
+                socket.emit('newMsg', this.props.userId, this.state.filter, this.state.message);
+                this.setState({ message: '' });
+            }
         }
     }
     

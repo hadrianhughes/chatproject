@@ -11,12 +11,16 @@ export default class RecommendedCanvas extends React.Component
             gridHeight: 40,
             canvasWidth: (window.innerWidth / 100) * 25,
             canvasHeight: window.innerHeight - ((window.innerHeight / 100) * 8),
-            fontSize: 20
+            fontSize: 20,
+            mouseX: 0,
+            mouseY: 0
         };
         
         this.makeBlocks = this.makeBlocks.bind(this);
         this.makeGrid = this.makeGrid.bind(this);
+        this.getMousePos = this.getMousePos.bind(this);
         this.renderCanvas = this.renderCanvas.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
     }
     
     componentDidMount()
@@ -27,6 +31,50 @@ export default class RecommendedCanvas extends React.Component
         
         this.refs.canvas.width = this.state.canvasWidth;
         this.refs.canvas.height = this.state.canvasHeight;
+    }
+    
+    handleMouseMove(e)
+    {
+        this.setState({
+            mouseX: e.clientX,
+            mouseY: e.clientY
+        });
+    }
+    
+    getMousePos(blocks, grid, callback)
+    {
+        //Find grid coords with mouse over
+        const gridX = Math.floor((this.state.mouseX / this.state.canvasWidth) * grid[0].length);
+        const gridY = Math.floor((this.state.mouseY / this.state.canvasHeight) * grid.length) - 3;
+        
+        //Default all blocks to not hovered
+        for(let i = 0;i < blocks.length;i++)
+        {
+            blocks[i].hovering = false;
+        }
+        
+        //Find block currently hovered over
+        if(gridY && gridX)
+        {
+            if(grid[gridY])
+            {
+                if(grid[gridY][gridX])
+                {
+                    if(grid[gridY][gridX] != 0)
+                    {
+                        for(let i = 0;i < blocks.length;i++)
+                        {
+                            if(blocks[i].id == grid[gridY][gridX])
+                            {
+                                blocks[i].hovering = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        callback(blocks, grid);
     }
     
     makeBlocks(words, callback)
@@ -40,13 +88,13 @@ export default class RecommendedCanvas extends React.Component
                 //size: Math.floor(Math.random() * 5) + 4,
                 size: words[i].length,
                 //color: 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')',
-                //color: 'rgb(' + (words[i].charCodeAt(0) * 2) + ', ' + (words[i].charCodeAt(words[i].length / 2) + words[i].charCodeAt(0)) + ', ' + (words[i].charCodeAt(words[i].length - 1) + words[i].charCodeAt(words[i].length / 2)) + ')',
                 color: 'rgb(' + ((words[i].charCodeAt(0) - 96) * 10) + ', ' + ((words[i].charCodeAt(words[i].length / 2) - 96) * 10) + ', ' + ((words[i].charCodeAt(words[i].length - 1) - 96) * 10) + ')',
                 x: 0,
                 y: 0,
                 centerX: 0,
                 centerY: 0,
-                onScreen: false
+                onScreen: false,
+                hovering: false
             });
             //console.log(((words[i].charCodeAt(0) - 96) * 10), ((words[i].charCodeAt(words[i].length / 2) - 96) * 10), ((words[i].charCodeAt(words[i].length - 1)) * 10));
         }
@@ -157,10 +205,19 @@ export default class RecommendedCanvas extends React.Component
                     {
                         //Render block to grid
                         ctx.fillStyle = blocks[grid[i][j] - 1].color;
+                        if(blocks[grid[i][j] - 1].hovering)
+                        {
+                            let colors = blocks[grid[i][j] - 1].color.substring(4);
+                            colors = colors.substring(0, colors.length - 1);
+                            colors = colors.split(',');
+                            const r = Math.ceil(parseInt(colors[0]) * 1.1);
+                            const g = Math.ceil(parseInt(colors[1]) * 1.1);
+                            const b = Math.ceil(parseInt(colors[2]) * 1.1);
+                            ctx.fillStyle = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                        }
                         ctx.beginPath();
                         ctx.fillRect(j * (this.state.canvasWidth / grid[i].length), i * (this.state.canvasHeight / grid.length), this.state.canvasWidth / grid[i].length + 1, this.state.canvasHeight / grid.length + 1);
                         ctx.closePath();
-                        
                     }
                 }
             }
@@ -173,7 +230,7 @@ export default class RecommendedCanvas extends React.Component
                 if(blocks[i].onScreen)
                 {
                     ctx.beginPath();
-                    ctx.fillText(blocks[i].name, (blocks[i].centerX * (this.state.canvasWidth / grid[0].length)) - ((this.state.fontSize * blocks[i].name.length) / 5), blocks[i].centerY * (this.state.canvasHeight / grid.length) + this.state.fontSize);
+                        ctx.fillText(blocks[i].name, (blocks[i].centerX * (this.state.canvasWidth / grid[0].length)) - ((this.state.fontSize * blocks[i].name.length) / 5), blocks[i].centerY * (this.state.canvasHeight / grid.length) + this.state.fontSize);
                     ctx.closePath();
                 }
             }
@@ -186,12 +243,15 @@ export default class RecommendedCanvas extends React.Component
         {
             this.makeGrid(blocks, function(grid)
             {
-                this.renderCanvas(grid, blocks);
+                this.getMousePos(blocks, grid, function(blocks, grid)
+                {
+                    this.renderCanvas(grid, blocks);
+                }.bind(this));
             }.bind(this));
         }.bind(this));
         
         return(
-            <canvas id="optionsCanvas" ref="canvas" />
+            <canvas id="optionsCanvas" ref="canvas" onMouseMove={this.handleMouseMove} />
         );
     }
 }

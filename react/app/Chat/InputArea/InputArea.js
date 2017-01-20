@@ -6,7 +6,9 @@ export default class InputArea extends React.Component
     {
         super();
         
-        this.state = { focused: false };
+        this.state = {
+            focused: false
+        };
         
         this.handleFocus = this.handleFocus.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
