@@ -29,6 +29,7 @@ td
 
 #options-column
 {
+    position: relative;
     width: 25%;
     background-color: #dc143c;
     
@@ -46,6 +47,23 @@ td
 {
     width: 50%;
     padding: 0;
+}
+
+#blocks
+{
+    position: absolute;
+    bottom: 0;
+    
+    width: 100%;
+}
+
+.block
+{
+    vertical-align: bottom;
+    float: left;
+    padding: 30px;
+    
+    font-size: 24px;
 }
 
 .canvas-button

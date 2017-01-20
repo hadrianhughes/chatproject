@@ -109,7 +109,15 @@ export default class App extends React.Component
             if(cleaned.length > 3)
             {
                 const parts = cleaned.split(' ');
-                words = words.concat(parts);
+                let items = [];
+                for(let j = 0;j < parts.length;j++)
+                {
+                    items.push({
+                        word: parts[j],
+                        color: 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')'
+                    });
+                }
+                words = words.concat(items);
             }
         }
         
@@ -117,7 +125,7 @@ export default class App extends React.Component
         {
             for(let j = i + 1;j < words.length;j++)
             {
-                if(words[i] == words[j])
+                if(words[i].word == words[j].word)
                 {
                     words.splice(i, 1);
                 }

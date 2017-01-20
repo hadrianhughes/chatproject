@@ -1,8 +1,10 @@
 import React from 'react';
 
-import OptionsCanvas from './OptionsCanvas';
+/*import OptionsCanvas from './OptionsCanvas';
 import RecommendedCanvas from './RecommendedCanvas';
-import NearbyCanvas from './NearbyCanvas';
+import NearbyCanvas from './NearbyCanvas';*/
+import RecommendedBlocks from './RecommendedBlocks';
+import NearbyBlocks from './NearbyBlocks';
 
 export default class OptionsColumn extends React.Component
 {
@@ -47,9 +49,10 @@ export default class OptionsColumn extends React.Component
                         </tr>
                     </tbody>
                 </table>
-                {this.state.isRecommended && this.props.words ? <RecommendedCanvas words={this.props.words} /> : null}
-                {this.state.isNearby && this.props.filters ? <NearbyCanvas filters={this.props.filters} /> : null}
-                {/*{this.props.filters.length > 0 ? <OptionsCanvas filters={this.props.filters} words={this.props.words} /> : null}*/}
+                {/*this.state.isRecommended ? <RecommendedCanvas words={this.props.words} /> : null*/}
+                {/*this.state.isNearby ? <NearbyCanvas filters={this.props.filters} /> : null*/}
+                {this.state.isRecommended ? <RecommendedBlocks words={this.props.words} /> : null}
+                {this.state.isNearby ? <NearbyBlocks filters={this.props.filters} /> : null}
             </td>
         );
     }
