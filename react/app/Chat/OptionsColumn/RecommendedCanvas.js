@@ -40,13 +40,15 @@ export default class RecommendedCanvas extends React.Component
                 //size: Math.floor(Math.random() * 5) + 4,
                 size: words[i].length,
                 //color: 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')',
-                color: 'rgb(' + (words[i].charCodeAt(0) * 2) + ', ' + (words[i].charCodeAt(words[i].length / 2) + words[i].charCodeAt(0)) + ', ' + (words[i].charCodeAt(words[i].length - 1) + words[i].charCodeAt(words[i].length / 2)) + ')',
+                //color: 'rgb(' + (words[i].charCodeAt(0) * 2) + ', ' + (words[i].charCodeAt(words[i].length / 2) + words[i].charCodeAt(0)) + ', ' + (words[i].charCodeAt(words[i].length - 1) + words[i].charCodeAt(words[i].length / 2)) + ')',
+                color: 'rgb(' + ((words[i].charCodeAt(0) - 96) * 10) + ', ' + ((words[i].charCodeAt(words[i].length / 2) - 96) * 10) + ', ' + ((words[i].charCodeAt(words[i].length - 1) - 96) * 10) + ')',
                 x: 0,
                 y: 0,
                 centerX: 0,
                 centerY: 0,
                 onScreen: false
             });
+            //console.log(((words[i].charCodeAt(0) - 96) * 10), ((words[i].charCodeAt(words[i].length / 2) - 96) * 10), ((words[i].charCodeAt(words[i].length - 1)) * 10));
         }
         
         callback(blocks);

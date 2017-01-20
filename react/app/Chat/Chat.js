@@ -103,8 +103,11 @@ export default class App extends React.Component
         for(let i = 0;i < messages.length;i++)
         {
             const cleaned = messages[i].value.replace(/,|\.|\n|\r|\t/g, '');
-            const parts = cleaned.split(' ');
-            words = words.concat(parts);
+            if(cleaned.length > 3)
+            {
+                const parts = cleaned.split(' ');
+                words = words.concat(parts);
+            }
         }
         
         for(let i = 0;i < words.length;i++)
