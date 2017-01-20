@@ -37,8 +37,10 @@ export default class RecommendedCanvas extends React.Component
             blocks.push({
                 id: i + 1,
                 name: words[i],
-                size: Math.floor(Math.random() * 5) + 4,
-                color: 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')',
+                //size: Math.floor(Math.random() * 5) + 4,
+                size: words[i].length,
+                //color: 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')',
+                color: 'rgb(' + (words[i].charCodeAt(0) * 2) + ', ' + (words[i].charCodeAt(words[i].length / 2) + words[i].charCodeAt(0)) + ', ' + (words[i].charCodeAt(words[i].length - 1) + words[i].charCodeAt(words[i].length / 2)) + ')',
                 x: 0,
                 y: 0,
                 centerX: 0,
