@@ -45,6 +45,7 @@ td
 #options-column td
 {
     width: 50%;
+    padding: 0;
 }
 
 .canvas-button
@@ -54,6 +55,12 @@ td
     width: 100%;
     height: 100%;
     padding: 0;
+    border: 0;
+    font-size: 20px;
+}
+.canvas-button.active
+{
+    background-color: #eb1f48;
 }
 
 #chat-column
