@@ -26,6 +26,7 @@ export default class App extends React.Component
         this.addMessage = this.addMessage.bind(this);
         this.setWords = this.setWords.bind(this);
         this.handleConnect = this.handleConnect.bind(this);
+        this.handleLeave = this.handleLeave.bind(this);
     }
     
     componentDidMount()
@@ -73,6 +74,13 @@ export default class App extends React.Component
                 filter: name
             });
             console.log('Connected to filter: ' + name);
+        }.bind(this));
+        
+        socket.on('leftFilter', function()
+        {
+            this.setState({
+                filter: ''
+            });
         }.bind(this));
     }
     
@@ -180,6 +188,11 @@ export default class App extends React.Component
         socket.emit('filterConnect', name);
     }
     
+    handleLeave()
+    {
+        socket.emit('leaveFilter');
+    }
+    
     render()
     {
         const remainingChars = this.state.messageLimit - this.state.message.length;
@@ -201,7 +214,7 @@ export default class App extends React.Component
                         <td id="chat-column">
                             <MessageList list={this.state.messages} username={this.props.username} />
                             <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} />
-                            <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter}</div>
+                            <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter} | {this.state.filter.length > 0 ? <a href="#" onClick={this.handleLeave}>Leave filter</a> : null}</div>
                         </td>
                     </tr>
                 </tbody>

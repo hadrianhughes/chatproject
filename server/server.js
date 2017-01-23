@@ -236,6 +236,18 @@ io.on('connection', function(socket)
         socket.emit('connectedFilter', filter);
     });
     
+    socket.on('leaveFilter', function()
+    {
+        for(let i = 0;i < connections.length;i++)
+        {
+            if(connections[i].id == socket.id)
+            {
+                socket.leave(connections[i].filter);
+                socket.emit('leftFilter');
+            }
+        }
+    });
+    
     socket.on('disconnect', function()
     {
         for(let i = 0;i < connections.length;i++)
