@@ -30,6 +30,8 @@ export default class App extends React.Component
     
     componentDidMount()
     {
+        console.log(this.props.userId);
+        
         socket.emit('loginCheck', this.props.userId);
         
         socket.on('loginCorrect', function(correct)
@@ -197,9 +199,9 @@ export default class App extends React.Component
                     <tr>
                         <OptionsColumn filters={this.state.filters} words={this.state.words} onConnect={(name) => this.handleConnect(name)} />
                         <td id="chat-column">
-                            <MessageList list={this.state.messages} />
+                            <MessageList list={this.state.messages} username={this.props.username} />
                             <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} />
-                            <div className={remainingColor}>Remaining characters: {remainingChars}</div>
+                            <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter}</div>
                         </td>
                     </tr>
                 </tbody>

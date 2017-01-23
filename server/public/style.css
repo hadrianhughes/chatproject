@@ -116,12 +116,17 @@ a:active
     background-color: white;
     border: 1px solid grey;
     border-radius: 10px;
+    
     list-style-type: none;
 }
 
 #chat-column li
 {
     height: 5%;
+}
+#chat-column li:nth-child(odd)
+{
+    background-color: #d7d7d7;
 }
 
 #input-area

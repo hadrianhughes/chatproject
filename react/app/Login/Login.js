@@ -25,6 +25,7 @@ export default class Login extends React.Component
     handleLogin(email, password)
     {
         //Send login request to server
+        this.props.getUsername(email);
         socket.emit('login', email, password);
     }
     

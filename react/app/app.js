@@ -13,11 +13,13 @@ class App extends React.Component
         this.state = {
             isLogin: true,
             isChat: false,
-            login: ''
+            login: '',
+            username: ''
         };
         
         this.handleLogin = this.handleLogin.bind(this);
         this.changeToLogin = this.changeToLogin.bind(this);
+        this.receiveUsername = this.receiveUsername.bind(this);
     }
     
     handleLogin(id)
@@ -31,12 +33,17 @@ class App extends React.Component
         this.setState({ isLogin: true, isChat: false });
     }
     
+    receiveUsername(username)
+    {
+        this.setState({ username: username });
+    }
+    
     render()
     {
         return(
             <div>
-                {this.state.isLogin ? <Login onLogin={(id) => this.handleLogin(id)} /> : null}
-                {this.state.isChat ? <Chat userId={this.state.login} backToLogin={this.changeToLogin} /> : null}
+                {this.state.isLogin ? <Login onLogin={(id) => this.handleLogin(id)} getUsername={(username) => this.receiveUsername(username)} /> : null}
+                {this.state.isChat ? <Chat userId={this.state.login} backToLogin={this.changeToLogin} username={this.state.username} /> : null}
             </div>
         );
     }
