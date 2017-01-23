@@ -1,8 +1,5 @@
 import React from 'react';
 
-/*import OptionsCanvas from './OptionsCanvas';
-import RecommendedCanvas from './RecommendedCanvas';
-import NearbyCanvas from './NearbyCanvas';*/
 import RecommendedBlocks from './RecommendedBlocks';
 import NearbyBlocks from './NearbyBlocks';
 
