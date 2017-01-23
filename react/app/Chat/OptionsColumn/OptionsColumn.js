@@ -51,8 +51,8 @@ export default class OptionsColumn extends React.Component
                 </table>
                 {/*this.state.isRecommended ? <RecommendedCanvas words={this.props.words} /> : null*/}
                 {/*this.state.isNearby ? <NearbyCanvas filters={this.props.filters} /> : null*/}
-                {this.state.isRecommended ? <RecommendedBlocks words={this.props.words} /> : null}
-                {this.state.isNearby ? <NearbyBlocks filters={this.props.filters} /> : null}
+                {this.state.isRecommended ? <RecommendedBlocks words={this.props.words} onConnect={this.props.onConnect} /> : null}
+                {this.state.isNearby ? <NearbyBlocks filters={this.props.filters} onConnect={(name) => this.props.onConnect(name)} /> : null}
             </td>
         );
     }

@@ -39,7 +39,7 @@ export default class InputArea extends React.Component
         
         return(
             <div id="input-area" className={this.state.focused ? 'focused' : null}>
-                <textarea id="message-box" value={this.props.messageValue} onFocus={this.handleFocus} onBlur={this.handleBlur} onChange={this.props.onChange} onKeyDown={this.props.onKeyDown}></textarea>
+                <textarea id="message-box" value={this.props.messageValue} onFocus={this.handleFocus} onBlur={this.handleBlur} onChange={this.props.onChange} onKeyDown={this.props.onKeyDown} onKeyUp={this.props.onKeyUp}></textarea>
                 <i className="fa fa-smile-o" aria-hidden="true"></i>
             </div>
         );

@@ -16,13 +16,16 @@ export default class App extends React.Component
             messages: [],
             filter: '',
             filters: [],
-            words: []
+            words: [],
+            shiftDown: false
         };
         
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
         this.addMessage = this.addMessage.bind(this);
         this.setWords = this.setWords.bind(this);
+        this.handleConnect = this.handleConnect.bind(this);
     }
     
     componentDidMount()
@@ -33,19 +36,15 @@ export default class App extends React.Component
         {
             if(correct)
             {
-                //Send GPS location to server
-                if(navigator.geolocation)
+                $.get('http://ipinfo.io', function(res)
                 {
-                    navigator.geolocation.getCurrentPosition(function(pos)
-                    {
-                        socket.emit('myLocation', pos.coords.latitude, pos.coords.longitude);
-                        socket.emit('getFilters');
-                    });
-                }
-                else
-                {
-                    alert('Please use a different browser.');
-                }
+                    const location = res.loc.split(',');
+                    const lat = parseFloat(location[0]);
+                    const long = parseFloat(location[1]);
+                    
+                    socket.emit('myLocation', lat, long);
+                    socket.emit('getFilters');
+                }, 'jsonp');
             }
             else
             {
@@ -65,6 +64,14 @@ export default class App extends React.Component
             this.addMessage(user, msg);
             this.setWords(this.state.messages);
         }.bind(this));
+        
+        socket.on('connectedFilter', function(name)
+        {
+            this.setState({
+                filter: name
+            });
+            console.log('Connected to filter: ' + name);
+        }.bind(this));
     }
     
     handleInputChange(e)
@@ -79,12 +86,32 @@ export default class App extends React.Component
     {
         if(e.key === 'Enter')
         {
-            if(this.state.message.length > 0)
+            if(!this.state.shiftDown)
             {
-                //Send message
-                socket.emit('newMsg', this.props.userId, this.state.filter, this.state.message);
-                this.setState({ message: '' });
+                e.preventDefault();
+                if(this.state.message.length > 0)
+                {
+                    //Send message
+                    socket.emit('newMsg', this.props.userId, this.state.filter, this.state.message);
+                    this.setState({ message: '' });
+                }
             }
+        }
+        else if(e.key === 'Shift')
+        {
+            this.setState({
+                shiftDown: true
+            });
+        }
+    }
+    
+    handleKeyUp(e)
+    {
+        if(e.key === 'Shift')
+        {
+            this.setState({
+                shiftDown: false
+            });
         }
     }
     
@@ -121,20 +148,34 @@ export default class App extends React.Component
             }
         }
         
+        let newWords = [];
         for(let i = 0;i < words.length;i++)
         {
-            for(let j = i + 1;j < words.length;j++)
+            let present = false;
+            for(let j = 0;j < newWords.length;j++)
             {
-                if(words[i].word == words[j].word)
+                if(newWords[j].word == words[i].word)
                 {
-                    words.splice(i, 1);
+                    present = true;
+                    break;
                 }
             }
+            
+            if(!present)
+            {
+                newWords.push(words[i]);
+            }
         }
+        //console.log(words);
         
         this.setState({
-            words: words
+            words: newWords
         });
+    }
+    
+    handleConnect(name)
+    {
+        socket.emit('filterConnect', name);
     }
     
     render()
@@ -154,10 +195,10 @@ export default class App extends React.Component
             <table className="max-width max-height">
                 <tbody>
                     <tr>
-                        <OptionsColumn filters={this.state.filters} words={this.state.words} />
+                        <OptionsColumn filters={this.state.filters} words={this.state.words} onConnect={(name) => this.handleConnect(name)} />
                         <td id="chat-column">
                             <MessageList list={this.state.messages} />
-                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} />
+                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} />
                             <div className={remainingColor}>Remaining characters: {remainingChars}</div>
                         </td>
                     </tr>

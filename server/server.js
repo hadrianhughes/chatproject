@@ -35,7 +35,8 @@ io.on('connection', function(socket)
     console.log('New connection.');
     connections.push({
         id: socket.id,
-        location: {}
+        location: {},
+        filter: 'default-filter'
     });
     socket.join('default-filter');
     
@@ -121,18 +122,21 @@ io.on('connection', function(socket)
                     //Find other users in my filter in range and send to them
                     for(let i = 0;i < connections.length;i++)
                     {
-                        for(let j in io.sockets.adapter.rooms[filter].sockets)
+                        if(io.sockets.adapter.rooms[filter])
                         {
-                            if(connections[i].id == j)
+                            for(let j in io.sockets.adapter.rooms[filter].sockets)
                             {
-                                getDistance(lat, long, connections[i].location.lat, connections[i].location.long, function(dist)
+                                if(connections[i].id == j)
                                 {
-                                    if(dist <= 40)
+                                    getDistance(lat, long, connections[i].location.lat, connections[i].location.long, function(dist)
                                     {
-                                        socket.broadcast.to(connections[i].id).emit('newMsg', msg, username);
-                                    }
-                                });
-                                break;
+                                        if(dist <= 40)
+                                        {
+                                            socket.broadcast.to(connections[i].id).emit('newMsg', msg, username);
+                                        }
+                                    });
+                                    break;
+                                }
                             }
                         }
                     }
@@ -164,8 +168,8 @@ io.on('connection', function(socket)
         for(let i in io.sockets.adapter.rooms)
         {
             //Make sure room is filter
-            /*if(filters.indexOf(i) > -1)
-            {*/
+            if(filters.indexOf(i) > -1)
+            {
                 //For each socket connected to the current room
                 for(let j in io.sockets.adapter.rooms[i].sockets)
                 {
@@ -209,11 +213,27 @@ io.on('connection', function(socket)
                         }
                     }
                 }
-            //}
+            }
         }
         
         
         socket.emit('filtersList', nearbyFilters);
+    });
+    
+    socket.on('filterConnect', function(filter)
+    {
+        socket.join(filter);
+        filters.push(filter);
+        for(let i = 0;i < connections.length;i++)
+        {
+            if(connections[i].id == socket.id)
+            {
+                socket.leave(connections[i].filter);
+                connections[i].filter = filter;
+            }
+        }
+        
+        socket.emit('connectedFilter', filter);
     });
     
     socket.on('disconnect', function()

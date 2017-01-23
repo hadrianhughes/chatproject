@@ -14,7 +14,7 @@ export default class RecommendedBlocks extends React.Component
             };
         }
         
-        let blockList = wordItems.map((item) => <div className="block" style={{backgroundColor: item.color}} key={item.key}>{item.word}</div>);
+        let blockList = wordItems.map((item) => <a href="#" onClick={() => this.props.onConnect(item.word)} key={item.key}><div className="block" style={{backgroundColor: item.color}}>{item.word}</div></a>);
         
         return(
             <div id="blocks">
