@@ -13,7 +13,7 @@ export default class MessageList extends React.Component
                 const fullValue = ':' + this.props.emojis[j].value + ':';
                 const exp = new RegExp(fullValue, "g");
                 
-                this.props.list[i].value = this.props.list[i].value.replace(exp, '<img src="' + this.props.emojis[j].image + '" />');
+                this.props.list[i].value = this.props.list[i].value.replace(exp, '<img class="emoji" src="' + this.props.emojis[j].image + '" />');
             }
         }
         

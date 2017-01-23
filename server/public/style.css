@@ -246,6 +246,12 @@ button:active
     padding: 20px;
 }
 
+.emoji
+{
+    width: 40px;
+    height: 40px;
+}
+
 .emoji-icon
 {
     float: left;

@@ -35,6 +35,7 @@ export default class App extends React.Component
         this.handleConnect = this.handleConnect.bind(this);
         this.handleLeave = this.handleLeave.bind(this);
         this.handleEmojiClick = this.handleEmojiClick.bind(this);
+        this.addEmoji = this.addEmoji.bind(this);
     }
     
     componentDidMount()
@@ -212,6 +213,16 @@ export default class App extends React.Component
         });
     }
     
+    addEmoji(string)
+    {
+        let newMessage = this.state.message;
+        newMessage += ':' + string + ': ';
+        this.setState({
+            message: newMessage,
+            emojisOpen: false
+        });
+    }
+    
     render()
     {
         const remainingChars = this.state.messageLimit - this.state.message.length;
@@ -232,7 +243,7 @@ export default class App extends React.Component
                         <OptionsColumn filters={this.state.filters} words={this.state.words} onConnect={(name) => this.handleConnect(name)} />
                         <td id="chat-column">
                             <MessageList list={this.state.messages} username={this.props.username} emojis={this.state.emojis} />
-                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} />
+                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} onAddEmoji={(string) => this.addEmoji(string)} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} />
                             <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter} | {this.state.filter.length > 0 ? <a href="#" onClick={this.handleLeave}>Leave filter</a> : null}</div>
                         </td>
                     </tr>

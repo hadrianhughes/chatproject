@@ -12,6 +12,7 @@ export default class InputArea extends React.Component
         
         this.handleFocus = this.handleFocus.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
+        this.addEmoji = this.addEmoji.bind(this);
     }
     
     handleFocus()
@@ -22,6 +23,12 @@ export default class InputArea extends React.Component
     handleBlur()
     {
         this.setState({ focused: false });
+    }
+    
+    addEmoji(string)
+    {
+        this.props.onAddEmoji(string);
+        this.refs.inputBox.focus();
     }
     
     render()
@@ -47,7 +54,7 @@ export default class InputArea extends React.Component
             emojiItems[i].key = i + 1;
         }
         
-        let emojiElements = emojiItems.map((item) => <div title={item.value} className="emoji-icon" style={{backgroundImage: 'url(' + item.image + ')'}} key={item.key}></div>);
+        let emojiElements = emojiItems.map((item) => <div title={item.value} className="emoji-icon" style={{backgroundImage: 'url(' + item.image + ')'}} key={item.key} onClick={() => this.addEmoji(item.value)}></div>);
         
         const emojiMenu =
         <div id="emoji-menu">
@@ -56,7 +63,7 @@ export default class InputArea extends React.Component
         
         return(
             <div id="input-area" className={this.state.focused ? 'focused' : null}>
-                <textarea id="message-box" value={this.props.messageValue} onFocus={this.handleFocus} onBlur={this.handleBlur} onChange={this.props.onChange} onKeyDown={this.props.onKeyDown} onKeyUp={this.props.onKeyUp}></textarea>
+                <textarea id="message-box" ref="inputBox" value={this.props.messageValue} onFocus={this.handleFocus} onBlur={this.handleBlur} onChange={this.props.onChange} onKeyDown={this.props.onKeyDown} onKeyUp={this.props.onKeyUp}></textarea>
                 {this.props.emojisOpen ? emojiMenu : null}
                 <i className="fa fa-smile-o" aria-hidden="true" onClick={this.props.onEmojiClick}></i>
             </div>
