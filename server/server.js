@@ -6,30 +6,11 @@ const MongoClient = require('mongodb').MongoClient;
 
 const Users = require('./modules/Users.js');
 const Chat = require('./modules/Chat.js');
-const Maintenance = require('./modules/Maintenance.js');
 
 let messages = [];
 let connections = [];
 let users = [];
 let filters = [];
-let trends = [];
-const MAX_TRENDS = 1000;
-
-//Keep filters up to date with messages
-trendTimer();
-function trendTimer()
-{
-    setTimeout(function()
-    {
-        callGetTrends(function()
-        {
-            trashTrends(function()
-            {
-                trendTimer();
-            });
-        });
-    }, 10*1000);
-}
 
 io.on('connection', function(socket)
 {
@@ -48,6 +29,19 @@ io.on('connection', function(socket)
         {
             if(success)
             {
+                for(let i = 0;i < users.length;i++)
+                {
+                    if(id.toString() == users[i].userId.toString())
+                    {
+                        io.to(users[i].socketId).emit('logout');
+                        break;
+                    }
+                }
+                users.push({
+                    userId: id.toString(),
+                    socketId: socket.id.toString()
+                });
+                
                 socket.emit('loginSuccess', id);
             }
             else
@@ -67,8 +61,8 @@ io.on('connection', function(socket)
                 {
                     if(id.toString() == users[i].userId.toString())
                     {
-                        console.log(users[i].socketId);
                         io.to(users[i].socketId).emit('logout');
+                        users.splice(i, 1);
                         break;
                     }
                 }
@@ -292,48 +286,6 @@ function getDistance(lat1, long1, lat2, long2, callback)
     const d = R * c;
     
     callback(d);
-}
-
-function callGetTrends(callback)
-{
-    Maintenance.getTrends(messages, function(trendList)
-    {
-        Maintenance.mergeTrends(trends, trendList, function(newTrends)
-        {
-            trends = newTrends;
-            
-            callback();
-        });
-    });
-}
-
-function trashTrends(callback)
-{
-    if(trends.length > MAX_TRENDS)
-    {
-        //Sort into decreasing order
-        for(let i = 0;i < trends.length;i++)
-        {
-            for(let j = 0;j < trends.length - 1;j++)
-            {
-                if(trends[j].count < trends[j + 1].count)
-                {
-                    const trendTemp = trends[j];
-                    trends[j] = trends[j + 1];
-                    trends[j + 1] = trendTemp;
-                }
-            }
-        }
-        
-        //Remove low count trends
-        const remainder = trends.length - MAX_TRENDS;
-        for(let i = 0;i < remainder;i++)
-        {
-            trends.shift();
-        }
-    }
-    
-    callback();
 }
 
 //Start server

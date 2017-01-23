@@ -7,7 +7,6 @@ export default class NearbyBlocks extends React.Component
         let filterItems = [];
         for(let i = 0;i < this.props.filters.length;i++)
         {
-            console.log(this.props.filters[i]);
             filterItems[i] = {
                 name: this.props.filters[i].value,
                 color: 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')',
