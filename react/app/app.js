@@ -25,17 +25,28 @@ class App extends React.Component
     handleLogin(id)
     {
         //Store account id in state for login later
-        this.setState({ login: id, isLogin: false, isChat: true });
+        this.setState({
+            login: id,
+            isLogin: false,
+            isChat: true
+        });
     }
     
     changeToLogin()
     {
-        this.setState({ isLogin: true, isChat: false });
+        this.setState({
+            isLogin: true,
+            isChat: false,
+            login: '',
+            username: ''
+        });
     }
     
     receiveUsername(username)
     {
-        this.setState({ username: username });
+        this.setState({
+            username: username
+        });
     }
     
     render()

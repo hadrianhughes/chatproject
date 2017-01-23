@@ -31,8 +31,6 @@ export default class App extends React.Component
     
     componentDidMount()
     {
-        console.log(this.props.userId);
-        
         socket.emit('loginCheck', this.props.userId);
         
         socket.on('loginCorrect', function(correct)
@@ -53,6 +51,11 @@ export default class App extends React.Component
             {
                 this.props.backToLogin();
             }
+        }.bind(this));
+        
+        socket.on('logout', function()
+        {
+            this.props.backToLogin();
         }.bind(this));
         
         socket.on('filtersList', function(list)
@@ -176,7 +179,6 @@ export default class App extends React.Component
                 newWords.push(words[i]);
             }
         }
-        //console.log(words);
         
         this.setState({
             words: newWords

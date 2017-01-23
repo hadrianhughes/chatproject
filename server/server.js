@@ -10,6 +10,7 @@ const Maintenance = require('./modules/Maintenance.js');
 
 let messages = [];
 let connections = [];
+let users = [];
 let filters = [];
 let trends = [];
 const MAX_TRENDS = 1000;
@@ -62,6 +63,20 @@ io.on('connection', function(socket)
         {
             if(success)
             {
+                for(let i = 0;i < users.length;i++)
+                {
+                    if(id.toString() == users[i].userId.toString())
+                    {
+                        console.log(users[i].socketId);
+                        io.to(users[i].socketId).emit('logout');
+                        break;
+                    }
+                }
+                
+                users.push({
+                    userId: id.toString(),
+                    socketId: socket.id.toString()
+                });
                 socket.emit('loginSuccess', id);
             }
             else
