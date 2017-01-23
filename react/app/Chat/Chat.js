@@ -17,7 +17,14 @@ export default class App extends React.Component
             filter: '',
             filters: [],
             words: [],
-            shiftDown: false
+            shiftDown: false,
+            emojisOpen: false,
+            emojis: [
+                {
+                    image: 'https://s-media-cache-ak0.pinimg.com/originals/af/ad/f0/afadf0890779ca4ba2b3e5c7940d6539.png',
+                    value: 'smile'
+                }
+            ]
         };
         
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -27,6 +34,7 @@ export default class App extends React.Component
         this.setWords = this.setWords.bind(this);
         this.handleConnect = this.handleConnect.bind(this);
         this.handleLeave = this.handleLeave.bind(this);
+        this.handleEmojiClick = this.handleEmojiClick.bind(this);
     }
     
     componentDidMount()
@@ -195,6 +203,15 @@ export default class App extends React.Component
         socket.emit('leaveFilter');
     }
     
+    handleEmojiClick()
+    {
+        const newVal = this.state.emojisOpen ? false : true;
+        
+        this.setState({
+            emojisOpen: newVal
+        });
+    }
+    
     render()
     {
         const remainingChars = this.state.messageLimit - this.state.message.length;
@@ -214,8 +231,8 @@ export default class App extends React.Component
                     <tr>
                         <OptionsColumn filters={this.state.filters} words={this.state.words} onConnect={(name) => this.handleConnect(name)} />
                         <td id="chat-column">
-                            <MessageList list={this.state.messages} username={this.props.username} />
-                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} />
+                            <MessageList list={this.state.messages} username={this.props.username} emojis={this.state.emojis} />
+                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} />
                             <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter} | {this.state.filter.length > 0 ? <a href="#" onClick={this.handleLeave}>Leave filter</a> : null}</div>
                         </td>
                     </tr>

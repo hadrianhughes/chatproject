@@ -37,10 +37,28 @@ export default class InputArea extends React.Component
             remainingCOlor = 'redText';
         }
         
+        //Emoji menu
+        let emojiItems = [];
+        for(let i = 0;i < this.props.emojis.length;i++)
+        {
+            emojiItems[i] = {};
+            emojiItems[i].image = this.props.emojis[i].image;
+            emojiItems[i].value = this.props.emojis[i].value;
+            emojiItems[i].key = i + 1;
+        }
+        
+        let emojiElements = emojiItems.map((item) => <div title={item.value} className="emoji-icon" style={{backgroundImage: 'url(' + item.image + ')'}} key={item.key}></div>);
+        
+        const emojiMenu =
+        <div id="emoji-menu">
+            {emojiElements}
+        </div>;
+        
         return(
             <div id="input-area" className={this.state.focused ? 'focused' : null}>
                 <textarea id="message-box" value={this.props.messageValue} onFocus={this.handleFocus} onBlur={this.handleBlur} onChange={this.props.onChange} onKeyDown={this.props.onKeyDown} onKeyUp={this.props.onKeyUp}></textarea>
-                <i className="fa fa-smile-o" aria-hidden="true"></i>
+                {this.props.emojisOpen ? emojiMenu : null}
+                <i className="fa fa-smile-o" aria-hidden="true" onClick={this.props.onEmojiClick}></i>
             </div>
         );
     }
