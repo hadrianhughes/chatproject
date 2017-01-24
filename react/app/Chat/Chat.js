@@ -24,7 +24,8 @@ export default class App extends React.Component
                     image: 'https://s-media-cache-ak0.pinimg.com/originals/af/ad/f0/afadf0890779ca4ba2b3e5c7940d6539.png',
                     value: 'smile'
                 }
-            ]
+            ],
+            mouseOnEmoji: false
         };
         
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -36,10 +37,15 @@ export default class App extends React.Component
         this.handleLeave = this.handleLeave.bind(this);
         this.handleEmojiClick = this.handleEmojiClick.bind(this);
         this.addEmoji = this.addEmoji.bind(this);
+        this.handleMouseDownEmoji = this.handleMouseDownEmoji.bind(this);
+        this.handleMouseUpEmoji = this.handleMouseUpEmoji.bind(this);
+        this.handleMouseDown = this.handleMouseDown.bind(this);
     }
     
     componentDidMount()
     {
+        window.addEventListener('mousedown', this.handleMouseDown, false);
+        
         socket.emit('loginCheck', this.props.userId);
         
         socket.on('loginCorrect', function(correct)
@@ -94,6 +100,16 @@ export default class App extends React.Component
                 filter: ''
             });
         }.bind(this));
+    }
+    
+    handleMouseDown()
+    {
+        if(!this.state.mouseOnEmoji)
+        {
+            this.setState({
+                emojisOpen: false
+            });
+        }
     }
     
     handleInputChange(e)
@@ -223,6 +239,20 @@ export default class App extends React.Component
         });
     }
     
+    handleMouseDownEmoji()
+    {
+        this.setState({
+            mouseOnEmoji: true
+        });
+    }
+    
+    handleMouseUpEmoji()
+    {
+        this.setState({
+            mouseOnEmoji: false
+        });
+    }
+    
     render()
     {
         const remainingChars = this.state.messageLimit - this.state.message.length;
@@ -243,7 +273,7 @@ export default class App extends React.Component
                         <OptionsColumn filters={this.state.filters} words={this.state.words} onConnect={(name) => this.handleConnect(name)} />
                         <td id="chat-column">
                             <MessageList list={this.state.messages} username={this.props.username} emojis={this.state.emojis} />
-                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} onAddEmoji={(string) => this.addEmoji(string)} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} />
+                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} onAddEmoji={(string) => this.addEmoji(string)} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} onMouseDown={this.handleMouseDownEmoji} onMouseUp={this.handleMouseUpEmoji} />
                             <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter} | {this.state.filter.length > 0 ? <a href="#" onClick={this.handleLeave}>Leave filter</a> : null}</div>
                         </td>
                     </tr>

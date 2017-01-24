@@ -28,6 +28,8 @@ export default class OptionsColumn extends React.Component
     
     handleNearbyClick()
     {
+        socket.emit('getFilters');
+        
         this.setState({
             isNearby: true,
             isRecommended: false

@@ -7,7 +7,8 @@ export default class InputArea extends React.Component
         super();
         
         this.state = {
-            focused: false
+            focused: false,
+            mouseDown: false
         };
         
         this.handleFocus = this.handleFocus.bind(this);
@@ -57,7 +58,7 @@ export default class InputArea extends React.Component
         let emojiElements = emojiItems.map((item) => <div title={item.value} className="emoji-icon" style={{backgroundImage: 'url(' + item.image + ')'}} key={item.key} onClick={() => this.addEmoji(item.value)}></div>);
         
         const emojiMenu =
-        <div id="emoji-menu">
+        <div id="emoji-menu" onMouseDown={this.props.onMouseDown} onMouseUp={this.props.onMouseUp}>
             {emojiElements}
         </div>;
         
