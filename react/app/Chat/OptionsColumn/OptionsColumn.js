@@ -11,11 +11,21 @@ export default class OptionsColumn extends React.Component
         
         this.state = {
             isRecommended: true,
-            isNearby: false
+            isNearby: false,
+            componentWidth: 0,
+            componentHeight: 0
         };
         
         this.handleRecClick = this.handleRecClick.bind(this);
         this.handleNearbyClick = this.handleNearbyClick.bind(this);
+    }
+    
+    componentDidMount()
+    {
+        this.setState({
+            componentWidth: this.refs.optionsColumn.clientWidth,
+            componentHeight: this.refs.optionsColumn.clientHeight
+        });
     }
     
     handleRecClick()
@@ -39,7 +49,7 @@ export default class OptionsColumn extends React.Component
     render()
     {
         return(
-            <td id="options-column">
+            <td id="options-column" ref="optionsColumn">
                 <table>
                     <tbody>
                         <tr>
@@ -48,9 +58,7 @@ export default class OptionsColumn extends React.Component
                         </tr>
                     </tbody>
                 </table>
-                {/*this.state.isRecommended ? <RecommendedCanvas words={this.props.words} /> : null*/}
-                {/*this.state.isNearby ? <NearbyCanvas filters={this.props.filters} /> : null*/}
-                {this.state.isRecommended ? <RecommendedBlocks words={this.props.words} onConnect={this.props.onConnect} /> : null}
+                {this.state.isRecommended ? <RecommendedBlocks words={this.props.words} width={this.state.componentWidth} height={this.state.componentHeight - (window.innerHeight / 10)} onConnect={this.props.onConnect} /> : null}
                 {this.state.isNearby ? <NearbyBlocks filters={this.props.filters} onConnect={(name) => this.props.onConnect(name)} /> : null}
             </td>
         );

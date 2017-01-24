@@ -2,6 +2,11 @@ import React from 'react';
 
 export default class MessageList extends React.Component
 {
+    componentDidUpdate()
+    {
+        $('#chat-column > ul').scrollTop($(document).height());
+    }
+    
     render()
     {
         for(let i = 0;i < this.props.list.length;i++)

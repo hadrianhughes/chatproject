@@ -57,11 +57,14 @@ a:active
 #options-column td
 {
     width: 50%;
+    height: 10vh;
     padding: 0;
 }
 
 #blocks
 {
+    overflow-y: auto;
+    max-height: 90vh;
     position: absolute;
     bottom: 0;
     
@@ -259,4 +262,11 @@ button:active
     height: 50px;
     
     background-size: contain;
+}
+
+#temp_test_div
+{
+    padding: 0;
+    margin: 0;
+    position: absolute;
 }

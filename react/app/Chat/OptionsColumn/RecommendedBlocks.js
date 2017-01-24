@@ -2,6 +2,20 @@ import React from 'react';
 
 export default class RecommendedBlocks extends React.Component
 {
+    constructor()
+    {
+        super();
+        
+        this.state = {
+            divPadding: 30
+        };
+    }
+    
+    componentDidUpdate()
+    {
+        $('#blocks').scrollTop($(document).height());
+    }
+    
     render()
     {
         let wordItems = [];
@@ -16,8 +30,28 @@ export default class RecommendedBlocks extends React.Component
         
         let blockList = wordItems.map((item) => <a href="#" onClick={() => this.props.onConnect(item.word)} key={item.key}><div className="block" style={{backgroundColor: item.color}}>{item.word}</div></a>);
         
+        /*let blockList = [];
+        let cumuWidth = 0;
+        for(let i = 0;i < wordItems.length;i++)
+        {
+            //Make a temporary span to contain text
+            const elem = document.createElement('span');
+            elem.innerHTML = wordItems[i].word;
+            elem.setAttribute('id', 'temp_test_div');
+            document.body.appendChild(elem);
+            //Get the width and height of the span
+            const divWidth = document.getElementById('temp_test_div').offsetWidth + (this.state.divPadding * 2);
+            const divHeight = document.getElementById('temp_test_div').offsetHeight + (this.state.divPadding * 2);
+            //Remove span from DOM
+            document.body.removeChild(document.getElementById('temp_test_div'));
+            
+            blockList.push(
+                <a href="#" onClick={() => this.props.onConnect(wordItems[i].word)} key={wordItems[i].key}><div className="block" style={{backgroundColor: wordItems[i].color}}>{wordItems[i].word}</div></a>
+            );
+        }*/
+        
         return(
-            <div id="blocks">
+            <div id="blocks" ref="container">
                 {blockList}
             </div>
         );
