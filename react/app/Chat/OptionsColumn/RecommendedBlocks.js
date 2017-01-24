@@ -7,13 +7,30 @@ export default class RecommendedBlocks extends React.Component
         super();
         
         this.state = {
-            divPadding: 30
+            mouseDown: false
         };
+        
+        this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
     }
     
     componentDidUpdate()
     {
-        $('#blocks').scrollTop($(document).height());
+        if(!this.state.mouseDown) $('#blocks').scrollTop($(document).height());
+    }
+    
+    handleMouseDown()
+    {
+        this.setState({
+            mouseDown: true
+        });
+    }
+    
+    handleMouseUp()
+    {
+        this.setState({
+            mouseUp: false
+        });
     }
     
     render()

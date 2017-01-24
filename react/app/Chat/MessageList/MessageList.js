@@ -2,9 +2,36 @@ import React from 'react';
 
 export default class MessageList extends React.Component
 {
+    constructor()
+    {
+        super();
+        
+        this.state = {
+            mouseDown: false
+        };
+        
+        this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
+    }
+    
     componentDidUpdate()
     {
-        $('#chat-column > ul').scrollTop($(document).height());
+        //Allows scrollbar to work
+        if(!this.state.mouseDown) $('#chat-column > ul').scrollTop($(document).height());
+    }
+    
+    handleMouseDown()
+    {
+        this.setState({
+            mouseDown: true
+        });
+    }
+    
+    handleMouseUp()
+    {
+        this.setState({
+            mouseDown: false
+        });
     }
     
     render()
@@ -27,7 +54,7 @@ export default class MessageList extends React.Component
         const listContent = this.props.list.map((item) => <li key={item.key} style={{ textAlign: item.user == this.props.username ? 'right' : 'left'}} dangerouslySetInnerHTML={{__html: item.text}}></li>);
         
         return(
-            <ul>
+            <ul onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
                 {listContent}
             </ul>
         );
