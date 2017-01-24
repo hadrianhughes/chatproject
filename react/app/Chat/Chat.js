@@ -68,6 +68,11 @@ export default class App extends React.Component
             }
         }.bind(this));
         
+        socket.on('leaveRoom', function()
+        {
+            socket.emit('leaveFilter');
+        });
+        
         socket.on('logout', function()
         {
             this.props.backToLogin();

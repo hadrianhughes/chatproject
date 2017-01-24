@@ -61,6 +61,7 @@ io.on('connection', function(socket)
                 {
                     if(id.toString() == users[i].userId.toString())
                     {
+                        io.to(users[i].socketId).emit('leaveRoom');
                         io.to(users[i].socketId).emit('logout');
                         users.splice(i, 1);
                         break;
