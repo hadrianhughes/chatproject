@@ -19,6 +19,7 @@ export default class MessageMenu extends React.Component
             <ul id="msgMenu" style={{top: this.state.y, left: this.state.x}} onMouseDown={this.props.onMouseDown} onMouseUp={this.props.onMouseUp}>
                 <li onClick={() => this.props.onMentionUser(this.state.user)}><a href="#"><b>Mention</b><br />{this.state.user}</a></li>
                 <li onClick={() => this.props.onMessageUser(this.state.user)}><a href="#"><b>Message</b><br />{this.state.user}</a></li>
+                <li onClick={() => this.props.onMuteUser(this.state.user)}><a href="#"><b>Mute</b><br />{this.state.user}</a></li>
             </ul>
         );
     }
