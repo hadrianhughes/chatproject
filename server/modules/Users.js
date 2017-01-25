@@ -151,4 +151,36 @@ Users.findUsername = function(db, id, callback)
     }
 };
 
+Users.findUserId = function(db, username, callback)
+{
+    try
+    {
+        db.collection('users').findOne({
+            "email" : username
+        }, function(err, doc)
+        {
+            if(err)
+            {
+                throw err;
+            }
+            else
+            {
+                if(doc)
+                {
+                    callback(true, doc._id);
+                }
+                else
+                {
+                    callback(false);
+                }
+            }
+        });
+    }
+    catch(ex)
+    {
+        console.log(ex);
+        callback(false);
+    }
+}
+
 module.exports = Users;

@@ -101,7 +101,7 @@ io.on('connection', function(socket)
         }
     });
     
-    socket.on('newMsg', function(user, filter, msg)
+    socket.on('newMsg', function(user, filter, msg, command, arg)
     {
         if(msg)
         {
@@ -115,37 +115,66 @@ io.on('connection', function(socket)
             {
                 if(success)
                 {
-                    //Send back to sender first
-                    socket.emit('newMsg', msg, username);
-                    
-                    //Get my lat and long
-                    let lat, long;
-                    for(let i = 0;i < connections.length;i++)
+                    //Check any commands given
+                    if(command == '/pm')
                     {
-                        if(connections[i].id == socket.id)
+                        //Find user given as argument
+                        if(arg)
                         {
-                            lat = connections[i].location.lat;
-                            long = connections[i].location.long;
+                            Users.findUserId(database, arg, function(success2, id)
+                            {
+                                if(success2)
+                                {
+                                    for(let i = 0;i < users.length;i++)
+                                    {
+                                        if(users[i].userId == id)
+                                        {
+                                            socket.broadcast.to(users[i].socketId).emit('newMsg', msg, username, true);
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    console.log('Username ' + arg + ' was not found.');
+                                }
+                            });
                         }
                     }
-                    
-                    //Find other users in my filter in range and send to them
-                    for(let i = 0;i < connections.length;i++)
+                    else
                     {
-                        if(io.sockets.adapter.rooms[filter])
+                        //Send back to sender first
+                        socket.emit('newMsg', msg, username, false);
+                        
+                        //Get my lat and long
+                        let lat, long;
+                        for(let i = 0;i < connections.length;i++)
                         {
-                            for(let j in io.sockets.adapter.rooms[filter].sockets)
+                            if(connections[i].id == socket.id)
                             {
-                                if(connections[i].id == j)
+                                lat = connections[i].location.lat;
+                                long = connections[i].location.long;
+                            }
+                        }
+                        
+                        //Find other users in my filter in range and send to them
+                        for(let i = 0;i < connections.length;i++)
+                        {
+                            if(io.sockets.adapter.rooms[filter])
+                            {
+                                for(let j in io.sockets.adapter.rooms[filter].sockets)
                                 {
-                                    getDistance(lat, long, connections[i].location.lat, connections[i].location.long, function(dist)
+                                    if(connections[i].id == j)
                                     {
-                                        if(dist <= 40)
+                                        getDistance(lat, long, connections[i].location.lat, connections[i].location.long, function(dist)
                                         {
-                                            socket.broadcast.to(connections[i].id).emit('newMsg', msg, username);
-                                        }
-                                    });
-                                    break;
+                                            if(dist <= 40)
+                                            {
+                                                socket.broadcast.to(connections[i].id).emit('newMsg', msg, username, false);
+                                            }
+                                        });
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -157,6 +186,11 @@ io.on('connection', function(socket)
                 }
             });
         }
+    });
+    
+    socket.on('privateMsg', function(from, to, message)
+    {
+        console.log(from, to, message);
     });
     
     socket.on('getFilters', function()

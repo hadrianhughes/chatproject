@@ -12,7 +12,7 @@ export default class App extends React.Component
         super();
         
         this.state = {
-            commands: [
+            argCommands: [
                 '/pm'
             ],
             message: '',
@@ -98,9 +98,9 @@ export default class App extends React.Component
             });
         }.bind(this));
         
-        socket.on('newMsg', function(msg, user)
+        socket.on('newMsg', function(msg, user, priv)
         {
-            this.addMessage(user, msg);
+            this.addMessage(user, msg, priv);
             this.setWords(this.state.messages);
         }.bind(this));
         
@@ -155,17 +155,34 @@ export default class App extends React.Component
                 {
                     //Find commands at start of message
                     let command = this.state.message.match(/\/.*/);
+                    let argument;
+                    let message = this.state.message;
                     if(command)
                     {
                         if(command.index == 0)
                         {
-                            command = command.input.split(' ')[0];
-                            
+                            const parts = command.input.split(' ');
+                            command = parts[0];
+                            if(this.state.argCommands.indexOf(command) > -1)
+                            {
+                                if(parts[1]) argument = parts[1];
+                                
+                                //Prepare message portion
+                                const fullCommand = parts[0] + ' ' + parts[1];
+                                message = this.state.message.replace(fullCommand, '');
+                                if(message[0] == ' ') message = message.substring(1);
+                            }
+                            else
+                            {
+                                message = this.state.message.replace(parts[0], '');
+                                if(message[0] == ' ') message = message.substring(1);
+                            }
                         }
                     }
                     
                     //Send message
-                    socket.emit('newMsg', this.props.userId, this.state.filter, this.state.message);
+                    socket.emit('newMsg', this.props.userId, this.state.filter, message, command, argument);
+                    //socket.emit('newMsg', this.props.userId, this.state.filter, this.state.message);
                     this.setState({ message: '' });
                 }
             }
@@ -188,12 +205,13 @@ export default class App extends React.Component
         }
     }
     
-    addMessage(user, message)
+    addMessage(user, message, priv)
     {
         let newMessages = this.state.messages;
         newMessages.push({
             user: user,
-            value: message
+            value: message,
+            priv: priv
         });
         this.setState({
             messages: newMessages
@@ -319,9 +337,10 @@ export default class App extends React.Component
         });
     }
     
-    messageUser()
+    messageUser(user)
     {
         this.setState({
+            message: '/pm ' + user + ' ',
             msgMenuOpen: false
         });
     }

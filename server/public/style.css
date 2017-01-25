@@ -132,6 +132,10 @@ a:active
 {
     background-color: #d7d7d7;
 }
+#messageList li.privateMsg
+{
+    background-color: #ea728a;
+}
 
 #input-area
 {
@@ -276,7 +280,7 @@ button:active
 
 #msgMenu li:hover
 {
-    background-color: grey;
+    background-color: #d3d3d3;
 }
 
 #temp_test_div
