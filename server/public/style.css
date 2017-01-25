@@ -110,7 +110,7 @@ a:active
     background-color: #fafafa;
 }
 
-#chat-column ul
+#messageList
 {
     width: 98%;
     height: 90%;
@@ -124,11 +124,11 @@ a:active
     list-style-type: none;
 }
 
-#chat-column li
+#messageList li
 {
     height: 5%;
 }
-#chat-column li:nth-child(odd)
+#messageList li:nth-child(odd)
 {
     background-color: #d7d7d7;
 }
@@ -262,6 +262,21 @@ button:active
     height: 50px;
     
     background-size: contain;
+}
+
+#msgMenu
+{
+    position: fixed;
+    
+    background-color: #f8f8f8;
+    border: 1px solid grey;
+    list-style-type: none;
+    padding: 0;
+}
+
+#msgMenu li:hover
+{
+    background-color: grey;
 }
 
 #temp_test_div

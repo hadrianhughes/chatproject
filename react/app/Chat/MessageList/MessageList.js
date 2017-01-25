@@ -12,6 +12,7 @@ export default class MessageList extends React.Component
         
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
+        this.handleMsgClick = this.handleMsgClick.bind(this);
     }
     
     componentDidUpdate()
@@ -34,6 +35,11 @@ export default class MessageList extends React.Component
         });
     }
     
+    handleMsgClick()
+    {
+        console.log('clicked message');
+    }
+    
     render()
     {
         for(let i = 0;i < this.props.list.length;i++)
@@ -51,10 +57,10 @@ export default class MessageList extends React.Component
             this.props.list[i].text = '<b>' + this.props.list[i].user + '</b><br />' + this.props.list[i].value;
         }
         
-        const listContent = this.props.list.map((item) => <li key={item.key} style={{ textAlign: item.user == this.props.username ? 'right' : 'left'}} dangerouslySetInnerHTML={{__html: item.text}}></li>);
+        const listContent = this.props.list.map((item) => <li key={item.key} style={{ textAlign: item.user == this.props.username ? 'right' : 'left'}} dangerouslySetInnerHTML={{__html: item.text}} onClick={(e) => this.props.onMsgClick(e, item.user)}></li>);
         
         return(
-            <ul onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
+            <ul id="messageList" onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
                 {listContent}
             </ul>
         );

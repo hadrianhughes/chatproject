@@ -3,6 +3,7 @@ import React from 'react';
 import InputArea from './InputArea/InputArea.js';
 import OptionsColumn from './OptionsColumn/OptionsColumn.js';
 import MessageList from './MessageList/MessageList';
+import MessageMenu from './MessageList/MessageMenu';
 
 export default class App extends React.Component
 {
@@ -11,6 +12,9 @@ export default class App extends React.Component
         super();
         
         this.state = {
+            commands: [
+                '/pm'
+            ],
             message: '',
             messageLimit: 200,
             messages: [],
@@ -25,7 +29,11 @@ export default class App extends React.Component
                     value: 'smile'
                 }
             ],
-            mouseOnEmoji: false
+            mouseOnEmoji: false,
+            msgMenuOpen: false,
+            mouseX: 0,
+            mouseY: 0,
+            mouseOnMsgMenu: false
         };
         
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -40,6 +48,11 @@ export default class App extends React.Component
         this.handleMouseDownEmoji = this.handleMouseDownEmoji.bind(this);
         this.handleMouseUpEmoji = this.handleMouseUpEmoji.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleMsgClick = this.handleMsgClick.bind(this);
+        this.handleMouseDownMsgMenu = this.handleMouseDownMsgMenu.bind(this);
+        this.handleMouseUpMsgMenu = this.handleMouseUpMsgMenu.bind(this);
+        this.messageUser = this.messageUser.bind(this);
+        this.mentionUser = this.mentionUser.bind(this);
     }
     
     componentDidMount()
@@ -115,6 +128,12 @@ export default class App extends React.Component
                 emojisOpen: false
             });
         }
+        if(!this.state.mouseOnMsgMenu)
+        {
+            this.setState({
+                msgMenuOpen: false
+            });
+        }
     }
     
     handleInputChange(e)
@@ -134,6 +153,17 @@ export default class App extends React.Component
                 e.preventDefault();
                 if(this.state.message.length > 0)
                 {
+                    //Find commands at start of message
+                    let command = this.state.message.match(/\/.*/);
+                    if(command)
+                    {
+                        if(command.index == 0)
+                        {
+                            command = command.input.split(' ')[0];
+                            
+                        }
+                    }
+                    
                     //Send message
                     socket.emit('newMsg', this.props.userId, this.state.filter, this.state.message);
                     this.setState({ message: '' });
@@ -265,6 +295,47 @@ export default class App extends React.Component
         });
     }
     
+    handleMsgClick(e, user)
+    {
+        this.setState({
+            mouseX: e.clientX,
+            mouseY: e.clientY,
+            clickedUser: user,
+            msgMenuOpen: true
+        });
+    }
+    
+    handleMouseDownMsgMenu()
+    {
+        this.setState({
+            mouseOnMsgMenu: true
+        });
+    }
+    
+    handleMouseUpMsgMenu()
+    {
+        this.setState({
+            mouseOnMsgMenu: false
+        });
+    }
+    
+    messageUser()
+    {
+        this.setState({
+            msgMenuOpen: false
+        });
+    }
+    
+    mentionUser(user)
+    {
+        let newMessage = this.state.message;
+        newMessage += '@' + user + ' ';
+        this.setState({
+            message: newMessage,
+            msgMenuOpen: false
+        });
+    }
+    
     render()
     {
         const remainingChars = this.state.messageLimit - this.state.message.length;
@@ -284,9 +355,10 @@ export default class App extends React.Component
                     <tr>
                         <OptionsColumn filters={this.state.filters} words={this.state.words} onConnect={(name) => this.handleConnect(name)} />
                         <td id="chat-column">
-                            <MessageList list={this.state.messages} username={this.props.username} emojis={this.state.emojis} />
+                            <MessageList list={this.state.messages} username={this.props.username} emojis={this.state.emojis} onMsgClick={(e, user) => this.handleMsgClick(e, user)} />
                             <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} onAddEmoji={(string) => this.addEmoji(string)} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} onMouseDown={this.handleMouseDownEmoji} onMouseUp={this.handleMouseUpEmoji} />
                             <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter} | {this.state.filter.length > 0 ? <a href="#" onClick={this.handleLeave}>Leave filter</a> : null}</div>
+                            {this.state.msgMenuOpen ? <MessageMenu x={this.state.mouseX} y={this.state.mouseY} user={this.state.clickedUser} onMouseDown={this.handleMouseDownMsgMenu} onMouseUp={this.handleMouseUpMsgMenu} onMessageUser={(user) => this.messageUser(user)} onMentionUser={this.mentionUser} /> : null}
                         </td>
                     </tr>
                 </tbody>
