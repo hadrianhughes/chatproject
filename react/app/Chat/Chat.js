@@ -175,10 +175,17 @@ export default class App extends React.Component
         let words = [];
         for(let i = 0;i < messages.length;i++)
         {
-            const cleaned = messages[i].value.replace(/,|\.|\n|\r|\t/g, '');
+            const cleaned = messages[i].value.replace(/,|\.|\n|\r|\t|<img.*\/>/g, '');
             if(cleaned.length > 3)
             {
-                const parts = cleaned.split(' ');
+                let parts = cleaned.split(' ');
+                for(let j = 0;j < parts.length;j++)
+                {
+                    if(parts[j].length < 1)
+                    {
+                        parts.splice(j, 1);
+                    }
+                }
                 let items = [];
                 for(let j = 0;j < parts.length;j++)
                 {
