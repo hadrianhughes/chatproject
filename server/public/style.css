@@ -132,9 +132,13 @@ a:active
 {
     background-color: #d7d7d7;
 }
-#messageList li.privateMsg
+#messageList li.privateMsg !important
 {
     background-color: #ea728a;
+}
+#messageList li.mentionedMsg
+{
+    background-color: #dac5c9;
 }
 
 #input-area
