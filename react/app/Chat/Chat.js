@@ -27,6 +27,10 @@ export default class App extends React.Component
                 {
                     image: 'https://s-media-cache-ak0.pinimg.com/originals/af/ad/f0/afadf0890779ca4ba2b3e5c7940d6539.png',
                     value: 'smile'
+                },
+                {
+                    image: 'http://pix.iemoji.com/images/emoji/apple/ios-9/256/face-with-tears-of-joy.png',
+                    value: 'joy'
                 }
             ],
             mouseOnEmoji: false,
@@ -352,6 +356,7 @@ export default class App extends React.Component
             message: '/pm ' + user + ' ',
             msgMenuOpen: false
         });
+        this.refs.inputArea.refs.inputBox.focus();
     }
     
     mentionUser(user)
@@ -362,6 +367,7 @@ export default class App extends React.Component
             message: newMessage,
             msgMenuOpen: false
         });
+        this.refs.inputArea.refs.inputBox.focus();
     }
     
     muteUser(user)
@@ -406,9 +412,9 @@ export default class App extends React.Component
                         <OptionsColumn filters={this.state.filters} words={this.state.words} onConnect={(name) => this.handleConnect(name)} />
                         <td id="chat-column">
                             <MessageList list={this.state.messages} muted={this.state.mutedUsers} username={this.props.username} emojis={this.state.emojis} onMsgClick={(e, user) => this.handleMsgClick(e, user)} />
-                            <InputArea onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} onAddEmoji={(string) => this.addEmoji(string)} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} onMouseDown={this.handleMouseDownEmoji} onMouseUp={this.handleMouseUpEmoji} />
+                            <InputArea ref="inputArea" onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} onAddEmoji={(string) => this.addEmoji(string)} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} onMouseDown={this.handleMouseDownEmoji} onMouseUp={this.handleMouseUpEmoji} />
                             <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter} | {this.state.filter.length > 0 ? <a href="#" onClick={this.handleLeave}>Leave filter</a> : null}</div>
-                            {this.state.msgMenuOpen ? <MessageMenu x={this.state.mouseX} y={this.state.mouseY} user={this.state.clickedUser} onMouseDown={this.handleMouseDownMsgMenu} onMouseUp={this.handleMouseUpMsgMenu} onMessageUser={(user) => this.messageUser(user)} onMentionUser={(user) => this.mentionUser(user)} onMuteUser={(user) => this.muteUser(user)} /> : null}
+                            {this.state.msgMenuOpen ? <MessageMenu x={this.state.mouseX} y={this.state.mouseY} user={this.state.clickedUser} me={this.props.username} onMouseDown={this.handleMouseDownMsgMenu} onMouseUp={this.handleMouseUpMsgMenu} onMessageUser={(user) => this.messageUser(user)} onMentionUser={(user) => this.mentionUser(user)} onMuteUser={(user) => this.muteUser(user)} /> : null}
                         </td>
                     </tr>
                 </tbody>
