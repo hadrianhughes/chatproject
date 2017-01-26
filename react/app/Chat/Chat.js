@@ -122,6 +122,11 @@ export default class App extends React.Component
         }.bind(this));
     }
     
+    componentWillUnmount()
+    {
+        window.removeEventListener('mousedown', this.handleMouseDown);
+    }
+    
     handleMouseDown()
     {
         if(!this.state.mouseOnEmoji)
@@ -184,7 +189,6 @@ export default class App extends React.Component
                     
                     //Send message
                     socket.emit('newMsg', this.props.userId, this.state.filter, message, command, argument);
-                    //socket.emit('newMsg', this.props.userId, this.state.filter, this.state.message);
                     this.setState({ message: '' });
                 }
             }
@@ -226,7 +230,7 @@ export default class App extends React.Component
         for(let i = 0;i < messages.length;i++)
         {
             const cleaned = messages[i].value.replace(/,|\.|\n|\r|\t|<img.*\/>/g, '');
-            if(cleaned.length > 3)
+            if(cleaned.length > 4)
             {
                 let parts = cleaned.split(' ');
                 for(let j = 0;j < parts.length;j++)
@@ -239,10 +243,13 @@ export default class App extends React.Component
                 let items = [];
                 for(let j = 0;j < parts.length;j++)
                 {
-                    items.push({
-                        word: parts[j],
-                        color: 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')'
-                    });
+                    if(parts[j][0] == '#')
+                    {
+                        items.push({
+                            word: parts[j],
+                            color: 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')'
+                        });
+                    }
                 }
                 words = words.concat(items);
             }

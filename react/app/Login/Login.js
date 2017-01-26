@@ -19,6 +19,7 @@ export default class Login extends React.Component
             signUpPasswordConf: ''
         };
         
+        this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
         this.handleSignUp = this.handleSignUp.bind(this);
         this.handleLoginFocus = this.handleLoginFocus.bind(this);
@@ -34,25 +35,33 @@ export default class Login extends React.Component
     
     componentDidMount()
     {
-        window.addEventListener('keydown', function(e){
-            if(e.key == 'Enter')
-            {
-                if(this.state.loginFocused)
-                {
-                    this.handleLogin();
-                }
-                else if(this.state.signUpFocused)
-                {
-                    this.handleSignUp();
-                }
-            }
-        }.bind(this), false);
+        window.addEventListener('keydown', this.handleKeyDown, false);
         
         //When login is accepted
         socket.on('loginSuccess', function(id)
         {
             this.props.onLogin(id);
         }.bind(this));
+    }
+    
+    componentWillUnmount()
+    {
+        window.removeEventListener('keydown', this.handleKeyDown);
+    }
+    
+    handleKeyDown(e)
+    {
+        if(e.key == 'Enter')
+        {
+            if(this.state.loginFocused)
+            {
+                this.handleLogin();
+            }
+            else if(this.state.signUpFocused)
+            {
+                this.handleSignUp();
+            }
+        }
     }
     
     handleLogin()
