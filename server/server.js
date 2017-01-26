@@ -264,6 +264,57 @@ io.on('connection', function(socket)
         socket.emit('filtersList', nearbyFilters);
     });
     
+    socket.on('getNearbyUsers', function()
+    {
+        //Get my lat and long
+        let lat, long;
+        for(let i = 0;i < connections.length;i++)
+        {
+            if(connections[i].id == socket.id)
+            {
+                lat = connections[i].location.lat;
+                long = connections[i].location.long;
+            }
+        }
+        
+        (function(callback)
+        {
+            //Array for names to be sent back
+            let names = [];
+            
+            for(let i = 0;i < connections.length;i++)
+            {
+                getDistance(lat, long, connections[i].location.lat, connections[i].location.long, function(dist)
+                {
+                    if(dist <= 40)
+                    {
+                        for(let j = 0;j < users.length;j++)
+                        {
+                            if(users[j].socketId == connections[i].id)
+                            {
+                                Users.findUsername(database, users[j].userId, function(success, username)
+                                {
+                                    if(username && names.length < 10)
+                                    {
+                                        names.push(username);
+                                    }
+                                    
+                                    if(i == connections.length - 1)
+                                    {
+                                        callback(names);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+        })(function(names)
+        {
+            socket.emit('userList', names);
+        });
+    });
+    
     socket.on('filterConnect', function(filter)
     {
         socket.join(filter);

@@ -4,6 +4,7 @@ import InputArea from './InputArea/InputArea.js';
 import OptionsColumn from './OptionsColumn/OptionsColumn.js';
 import MessageList from './MessageList/MessageList';
 import MessageMenu from './MessageList/MessageMenu';
+import MentionsMenu from './MessageList/MentionsMenu';
 
 export default class App extends React.Component
 {
@@ -38,7 +39,8 @@ export default class App extends React.Component
             mouseX: 0,
             mouseY: 0,
             mouseOnMsgMenu: false,
-            mutedUsers: []
+            mutedUsers: [],
+            nearbyUsers: []
         };
         
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -59,6 +61,7 @@ export default class App extends React.Component
         this.messageUser = this.messageUser.bind(this);
         this.mentionUser = this.mentionUser.bind(this);
         this.muteUser = this.muteUser.bind(this);
+        this.handleUserSuggestionClick = this.handleUserSuggestionClick.bind(this);
     }
     
     componentDidMount()
@@ -79,6 +82,7 @@ export default class App extends React.Component
                     
                     socket.emit('myLocation', lat, long);
                     socket.emit('getFilters');
+                    socket.emit('getNearbyUsers');
                 }, 'jsonp');
             }
             else
@@ -122,6 +126,13 @@ export default class App extends React.Component
         {
             this.setState({
                 filter: ''
+            });
+        }.bind(this));
+        
+        socket.on('userList', function(list)
+        {
+            this.setState({
+                nearbyUsers: list
             });
         }.bind(this));
     }
@@ -392,6 +403,16 @@ export default class App extends React.Component
         }
     }
     
+    handleUserSuggestionClick(user)
+    {
+        let currentMessage = this.state.message;
+        currentMessage += user + ' ';
+        this.setState({
+            message: currentMessage
+        });
+        this.refs.inputArea.refs.inputBox.focus();
+    }
+    
     render()
     {
         const remainingChars = this.state.messageLimit - this.state.message.length;
@@ -415,6 +436,7 @@ export default class App extends React.Component
                             <InputArea ref="inputArea" onChange={this.handleInputChange} messageValue={this.state.message} messageLimit={this.state.messageLimit} onKeyDown={this.handleKeyDown} onKeyUp={this.handleKeyUp} onEmojiClick={this.handleEmojiClick} onAddEmoji={(string) => this.addEmoji(string)} emojis={this.state.emojis} emojisOpen={this.state.emojisOpen} onMouseDown={this.handleMouseDownEmoji} onMouseUp={this.handleMouseUpEmoji} />
                             <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter} | {this.state.filter.length > 0 ? <a href="#" onClick={this.handleLeave}>Leave filter</a> : null}</div>
                             {this.state.msgMenuOpen ? <MessageMenu x={this.state.mouseX} y={this.state.mouseY} user={this.state.clickedUser} me={this.props.username} onMouseDown={this.handleMouseDownMsgMenu} onMouseUp={this.handleMouseUpMsgMenu} onMessageUser={(user) => this.messageUser(user)} onMentionUser={(user) => this.mentionUser(user)} onMuteUser={(user) => this.muteUser(user)} /> : null}
+                            {this.state.message[this.state.message.length - 1] == '@' ? <MentionsMenu list={this.state.nearbyUsers} onClick={(user) => this.handleUserSuggestionClick(user)} /> : null}
                         </td>
                     </tr>
                 </tbody>
