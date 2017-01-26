@@ -371,6 +371,12 @@ export default class App extends React.Component
                 });
             }
         }
+        else
+        {
+            this.setState({
+                msgMenuOpen: false
+            });
+        }
     }
     
     render()
