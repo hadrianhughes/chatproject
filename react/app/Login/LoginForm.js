@@ -16,6 +16,8 @@ export default class LoginForm extends React.Component
                         <td><input type="password" value={this.props.password} onChange={this.props.onPasswordChange} /></td>
                     </tr>
                     <tr>
+                    </tr>
+                    <tr>
                         <td>
                         </td>
                         <td>
