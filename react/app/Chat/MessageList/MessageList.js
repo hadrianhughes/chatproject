@@ -69,8 +69,7 @@ export default class MessageList extends React.Component
             }
         }
         
-        newList.map(function(item){ console.log('Priv: ' + item.priv); });
-        const listContent = newList.map((item) => <li key={item.key} className={item.priv ? "privateMsg" : null + item.mentioned ? "mentionedMsg" : null} style={{ textAlign: item.user == this.props.username ? 'right' : 'left'}} dangerouslySetInnerHTML={{__html: item.text}} onContextMenu={(e) => this.props.onMsgClick(e, item.user)}></li>);
+        const listContent = newList.map((item) => <li key={item.key} className={item.priv ? "privateMsg" : null + item.mentioned ? "mentionedMsg" : null} style={{ textAlign: item.user == this.props.username ? 'right' : 'left' }} dangerouslySetInnerHTML={{__html: item.text}} onContextMenu={(e) => this.props.onMsgClick(e, item.user)}></li>);
         
         return(
             <ul id="messageList" onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>

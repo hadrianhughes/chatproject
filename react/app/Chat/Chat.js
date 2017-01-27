@@ -347,12 +347,15 @@ export default class App extends React.Component
     handleMsgClick(e, user)
     {
         e.preventDefault();
-        this.setState({
-            mouseX: e.clientX,
-            mouseY: e.clientY,
-            clickedUser: user,
-            msgMenuOpen: true
-        });
+        if(user != this.props.username)
+        {
+            this.setState({
+                mouseX: e.clientX,
+                mouseY: e.clientY,
+                clickedUser: user,
+                msgMenuOpen: true
+            });
+        }
     }
     
     handleMouseDownMsgMenu()

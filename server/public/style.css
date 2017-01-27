@@ -140,6 +140,7 @@ input
 #messageList li
 {
     height: 5%;
+    padding: 10px;
 }
 #messageList li:nth-child(odd)
 {
@@ -147,7 +148,7 @@ input
 }
 #messageList li.privateMsg
 {
-    background-color: #ea728a;
+    background-color: #bced91;
 }
 #messageList li.mentionedMsg
 {
