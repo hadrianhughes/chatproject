@@ -62,6 +62,7 @@ export default class App extends React.Component
         this.mentionUser = this.mentionUser.bind(this);
         this.muteUser = this.muteUser.bind(this);
         this.handleUserSuggestionClick = this.handleUserSuggestionClick.bind(this);
+        this.logout = this.logout.bind(this);
     }
     
     componentDidMount()
@@ -140,6 +141,7 @@ export default class App extends React.Component
     componentWillUnmount()
     {
         window.removeEventListener('mousedown', this.handleMouseDown);
+        socket.removeAllListeners();
     }
     
     handleMouseDown()
@@ -424,6 +426,16 @@ export default class App extends React.Component
         this.refs.inputArea.refs.inputBox.focus();
     }
     
+    logout()
+    {
+        localStorage.removeItem('chatLoginId');
+        localStorage.removeItem('chatRandString');
+        sessionStorage.removeItem('chatLoginId');
+        sessionStorage.removeItem('chatRandString');
+        
+        this.props.backToLogin();
+    }
+    
     render()
     {
         const remainingChars = this.state.messageLimit - this.state.message.length;
@@ -436,7 +448,6 @@ export default class App extends React.Component
         {
             remainingColor = 'orangeText';
         }
-        
         return(
             <table className="max-width max-height">
                 <tbody>
@@ -448,6 +459,7 @@ export default class App extends React.Component
                             <div className={remainingColor}>Remaining characters: {remainingChars} | Current filter: {this.state.filter} | {this.state.filter.length > 0 ? <a href="#" onClick={this.handleLeave}>Leave filter</a> : null}</div>
                             {this.state.msgMenuOpen ? <MessageMenu x={this.state.mouseX} y={this.state.mouseY} user={this.state.clickedUser} me={this.props.username} onMouseDown={this.handleMouseDownMsgMenu} onMouseUp={this.handleMouseUpMsgMenu} onMessageUser={(user) => this.messageUser(user)} onMentionUser={(user) => this.mentionUser(user)} onMuteUser={(user) => this.muteUser(user)} /> : null}
                             {this.state.message[this.state.message.length - 1] == '@' ? <MentionsMenu list={this.state.nearbyUsers} onClick={(user) => this.handleUserSuggestionClick(user)} /> : null}
+                            <div id="logoutButton" onClick={this.logout}><a href="#">Logout</a></div>
                         </td>
                     </tr>
                 </tbody>

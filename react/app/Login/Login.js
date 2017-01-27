@@ -39,17 +39,6 @@ export default class Login extends React.Component
     
     componentDidMount()
     {
-        let userId = sessionStorage.getItem('chatLoginId');
-        if(!userId) userId = localStorage.getItem('chatLoginId');
-        let userString = sessionStorage.getItem('chatRandString');
-        if(!userString) userString = localStorage.getItem('chatRandString');
-        
-        if(userId && userString)
-        {
-            socket.emit('autoLogin', userId, userString);
-        }
-        
-        
         window.addEventListener('keydown', this.handleKeyDown, false);
         
         //When login is accepted
@@ -64,6 +53,8 @@ export default class Login extends React.Component
             else
             {
                 //Save to session storage
+                localStorage.removeItem('chatLoginId');
+                localStorage.removeItem('chatRandString');
                 sessionStorage.setItem('chatLoginId', id);
                 sessionStorage.setItem('chatRandString', randNum);
             }
@@ -74,6 +65,7 @@ export default class Login extends React.Component
     componentWillUnmount()
     {
         window.removeEventListener('keydown', this.handleKeyDown);
+        socket.removeAllListeners();
     }
     
     handleKeyDown(e)

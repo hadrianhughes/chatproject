@@ -87,10 +87,11 @@ io.on('connection', function(socket)
         {
             if(successful)
             {
-                socket.emit('loginSuccess', id, string);
+                socket.emit('loginSuccess', true, id, string);
             }
             else
             {
+                socket.emit('loginSuccess', false);
                 console.log('Login failed for user with ID ' + id);
             }
         });

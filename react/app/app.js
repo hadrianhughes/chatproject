@@ -10,8 +10,18 @@ class App extends React.Component
     {
         super();
         
+        let userId = sessionStorage.getItem('chatLoginId');
+        if(!userId) userId = localStorage.getItem('chatLoginId');
+        let userString = sessionStorage.getItem('chatRandString');
+        if(!userString) userString = localStorage.getItem('chatRandString');
+        
+        if(userId && userString)
+        {
+            socket.emit('autoLogin', userId, userString);
+        }
+        
         this.state = {
-            isLogin: true,
+            isLogin: false,
             isChat: false,
             login: '',
             username: ''
@@ -19,6 +29,36 @@ class App extends React.Component
         
         this.handleLogin = this.handleLogin.bind(this);
         this.changeToLogin = this.changeToLogin.bind(this);
+    }
+    
+    componentDidMount()
+    {
+        socket.on('loginSuccess', function(successful, id, string)
+        {
+            if(successful)
+            {
+                this.setState({
+                    isLogin: false,
+                    isChat: true,
+                    login: id,
+                    username: ''
+                });
+            }
+            else
+            {
+                this.setState({
+                    isLogin: true,
+                    isChat: false,
+                    login: '',
+                    username: ''
+                });
+            }
+        }.bind(this));
+    }
+    
+    componentWillUnmount()
+    {
+        socket.removeAllListeners();
     }
     
     handleLogin(id, username)
@@ -44,6 +84,7 @@ class App extends React.Component
     
     render()
     {
+        console.log(this.state.isLogin, this.state.isChat);
         return(
             <div>
                 {this.state.isLogin ? <Login onLogin={(id, username) => this.handleLogin(id, username)} /> : null}
