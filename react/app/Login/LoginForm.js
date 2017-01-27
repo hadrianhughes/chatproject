@@ -18,6 +18,10 @@ export default class LoginForm extends React.Component
                     <tr>
                     </tr>
                     <tr>
+                        <td>Remember me: </td>
+                        <td><input type="checkbox" value={this.props.remember} onChange={this.props.onRememberChange} /></td>
+                    </tr>
+                    <tr>
                         <td>
                         </td>
                         <td>

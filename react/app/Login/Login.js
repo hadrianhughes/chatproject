@@ -14,6 +14,7 @@ export default class Login extends React.Component
             signUpFocused: false,
             loginUsername: '',
             loginPassword: '',
+            loginRemember: false,
             signUpUsername: '',
             signUpEmail: '',
             signUpPassword: '',
@@ -29,6 +30,7 @@ export default class Login extends React.Component
         this.handleSignUpBlur = this.handleSignUpBlur.bind(this);
         this.handleLoginUsernameChange = this.handleLoginUsernameChange.bind(this);
         this.handleLoginPasswordChange = this.handleLoginPasswordChange.bind(this);
+        this.handleLoginRememberChange = this.handleLoginRememberChange.bind(this);
         this.handleSignUpUsernameChange = this.handleSignUpUsernameChange.bind(this);
         this.handleSignUpEmailChange = this.handleSignUpEmailChange.bind(this);
         this.handleSignUpPasswordChange = this.handleSignUpPasswordChange.bind(this);
@@ -37,12 +39,34 @@ export default class Login extends React.Component
     
     componentDidMount()
     {
+        let userId = sessionStorage.getItem('chatLoginId');
+        if(!userId) userId = localStorage.getItem('chatLoginId');
+        let userString = sessionStorage.getItem('chatRandString');
+        if(!userString) userString = localStorage.getItem('chatRandString');
+        
+        if(userId && userString)
+        {
+            socket.emit('autoLogin', userId, userString);
+        }
+        
+        
         window.addEventListener('keydown', this.handleKeyDown, false);
         
         //When login is accepted
-        socket.on('loginSuccess', function(id)
+        socket.on('loginSuccess', function(id, randNum)
         {
-            console.log(this.state.loginUsername);
+            if(this.state.loginRemember)
+            {
+                //Save to local storage
+                localStorage.setItem('chatLoginId', id);
+                localStorage.setItem('chatRandString', randNum);
+            }
+            else
+            {
+                //Save to session storage
+                sessionStorage.setItem('chatLoginId', id);
+                sessionStorage.setItem('chatRandString', randNum);
+            }
             this.props.onLogin(id, this.state.loginUsername);
         }.bind(this));
     }
@@ -93,6 +117,13 @@ export default class Login extends React.Component
     {
         this.setState({
             loginPassword: e.target.value
+        });
+    }
+    
+    handleLoginRememberChange(e)
+    {
+        this.setState({
+            loginRemember: e.target.value
         });
     }
     
@@ -159,7 +190,7 @@ export default class Login extends React.Component
                 <div id="loginForm">
                     <div>
                         <h1>Login</h1>
-                        <LoginForm username={this.state.loginUsername} password={this.state.loginPassword} onUsernameChange={this.handleLoginUsernameChange} onPasswordChange={this.handleLoginPasswordChange} onLogin={this.handleLogin} onFocus={this.handleLoginFocus} onBlur={this.handleLoginBlur} />
+                        <LoginForm username={this.state.loginUsername} password={this.state.loginPassword} remember={this.state.loginRemember} onUsernameChange={this.handleLoginUsernameChange} onPasswordChange={this.handleLoginPasswordChange} onRememberChange={this.handleLoginRememberChange} onLogin={this.handleLogin} onFocus={this.handleLoginFocus} onBlur={this.handleLoginBlur} />
                     </div>
                     <div>
                         <h1>Sign up</h1>

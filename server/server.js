@@ -53,7 +53,7 @@ io.on('connection', function(socket)
     
     socket.on('login', function(username, password)
     {
-        Users.login(database, username, password, function(success, id)
+        Users.login(database, username, password, function(success, id, string)
         {
             if(success)
             {
@@ -72,11 +72,26 @@ io.on('connection', function(socket)
                     userId: id.toString(),
                     socketId: socket.id.toString()
                 });
-                socket.emit('loginSuccess', id);
+                socket.emit('loginSuccess', id, string);
             }
             else
             {
                 console.log('Login for username ' + username + ' failed.');
+            }
+        });
+    });
+    
+    socket.on('autoLogin', function(id, string)
+    {
+        Users.autoLogin(database, id, string, function(successful)
+        {
+            if(successful)
+            {
+                socket.emit('loginSuccess', id, string);
+            }
+            else
+            {
+                console.log('Login failed for user with ID ' + id);
             }
         });
     });
