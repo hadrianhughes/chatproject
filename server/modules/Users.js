@@ -6,11 +6,13 @@ Users.makeAccount = function(db, username, email, password, callback)
 {
     try
     {
-        db.collection('users').save({
-            "username" : username,
-            "email" : email,
-            "password" : password
-        }, function(err)
+        db.collection('users').findOne({
+            "$or": [{
+                "email" : email
+            }, {
+                "username" : username
+            }]
+        }, function(err, doc)
         {
             if(err)
             {
@@ -18,32 +20,61 @@ Users.makeAccount = function(db, username, email, password, callback)
             }
             else
             {
-                try
+                if(doc)
                 {
-                    db.collection('users').findOne({
-                        "email" : email
-                    }, function(err, doc)
+                    callback(false);
+                }
+                else
+                {
+                    try
                     {
-                        if(err)
+                        db.collection('users').save({
+                            "username" : username,
+                            "email" : email,
+                            "password" : password
+                        }, function(err)
                         {
-                            throw err;
-                        }
-                        else
-                        {
-                            if(doc)
+                            if(err)
                             {
-                                callback(true, doc._id);
+                                throw err;
                             }
                             else
                             {
-                                callback(false);
+                                try
+                                {
+                                    db.collection('users').findOne({
+                                        "email" : email
+                                    }, function(err, doc)
+                                    {
+                                        if(err)
+                                        {
+                                            throw err;
+                                        }
+                                        else
+                                        {
+                                            if(doc)
+                                            {
+                                                callback(true, doc._id);
+                                            }
+                                            else
+                                            {
+                                                callback(false);
+                                            }
+                                        }
+                                    });
+                                }
+                                catch(ex)
+                                {
+                                    throw ex;
+                                }
                             }
-                        }
-                    });
-                }
-                catch(ex)
-                {
-                    throw ex;
+                        });
+                    }
+                    catch(ex)
+                    {
+                        console.log(ex);
+                        callback(false);
+                    }
                 }
             }
         });
