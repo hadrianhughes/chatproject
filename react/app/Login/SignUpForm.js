@@ -8,6 +8,10 @@ export default class SignUpForm extends React.Component
             <table onFocus={this.props.onFocus} onBlur={this.props.onBlur}>
                 <tbody>
                     <tr>
+                        <td>Username: </td>
+                        <td><input type="text" value={this.props.username} onChange={this.props.onUsernameChange} /></td>
+                    </tr>
+                    <tr>
                         <td>Email: </td>
                         <td><input type="text" value={this.props.email} onChange={this.props.onEmailChange} /></td>
                     </tr>

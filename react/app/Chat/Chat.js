@@ -214,6 +214,13 @@ export default class App extends React.Component
                 shiftDown: true
             });
         }
+        else if(e.key === '@')
+        {
+            if(this.state.shiftDown)
+            {
+                socket.emit('getNearbyUsers');
+            }
+        }
     }
     
     handleKeyUp(e)
@@ -339,6 +346,7 @@ export default class App extends React.Component
     
     handleMsgClick(e, user)
     {
+        e.preventDefault();
         this.setState({
             mouseX: e.clientX,
             mouseY: e.clientY,

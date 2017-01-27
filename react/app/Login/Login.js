@@ -12,8 +12,9 @@ export default class Login extends React.Component
         this.state = {
             loginFocused: false,
             signUpFocused: false,
-            loginEmail: '',
+            loginUsername: '',
             loginPassword: '',
+            signUpUsername: '',
             signUpEmail: '',
             signUpPassword: '',
             signUpPasswordConf: ''
@@ -26,8 +27,9 @@ export default class Login extends React.Component
         this.handleLoginBlur = this.handleLoginBlur.bind(this);
         this.handleSignUpFocus = this.handleSignUpFocus.bind(this);
         this.handleSignUpBlur = this.handleSignUpBlur.bind(this);
-        this.handleLoginEmailChange = this.handleLoginEmailChange.bind(this);
+        this.handleLoginUsernameChange = this.handleLoginUsernameChange.bind(this);
         this.handleLoginPasswordChange = this.handleLoginPasswordChange.bind(this);
+        this.handleSignUpUsernameChange = this.handleSignUpUsernameChange.bind(this);
         this.handleSignUpEmailChange = this.handleSignUpEmailChange.bind(this);
         this.handleSignUpPasswordChange = this.handleSignUpPasswordChange.bind(this);
         this.handleSignUpPasswordConfChange = this.handleSignUpPasswordConfChange.bind(this);
@@ -40,7 +42,8 @@ export default class Login extends React.Component
         //When login is accepted
         socket.on('loginSuccess', function(id)
         {
-            this.props.onLogin(id);
+            console.log(this.state.loginUsername);
+            this.props.onLogin(id, this.state.loginUsername);
         }.bind(this));
     }
     
@@ -67,8 +70,7 @@ export default class Login extends React.Component
     handleLogin()
     {
         //Send login request to server
-        this.props.getUsername(this.state.loginEmail);
-        socket.emit('login', this.state.loginEmail, this.state.loginPassword);
+        socket.emit('login', this.state.loginUsername, this.state.loginPassword);
     }
     
     handleSignUp()
@@ -76,14 +78,14 @@ export default class Login extends React.Component
         //Send sign up request to server
         if(this.state.signUpPassword == this.state.signUpPasswordConf)
         {
-            socket.emit('signUp', this.state.signUpEmail, this.state.signUpPassword);
+            socket.emit('signUp', this.state.signUpUsername, this.state.signUpEmail, this.state.signUpPassword);
         }
     }
     
-    handleLoginEmailChange(e)
+    handleLoginUsernameChange(e)
     {
         this.setState({
-            loginEmail: e.target.value
+            loginUsername: e.target.value
         });
     }
     
@@ -91,6 +93,13 @@ export default class Login extends React.Component
     {
         this.setState({
             loginPassword: e.target.value
+        });
+    }
+    
+    handleSignUpUsernameChange(e)
+    {
+        this.setState({
+            signUpUsername: e.target.value
         });
     }
     
@@ -150,11 +159,11 @@ export default class Login extends React.Component
                 <div id="loginForm">
                     <div>
                         <h1>Login</h1>
-                        <LoginForm email={this.state.loginEmail} password={this.state.loginPassword} onEmailChange={this.handleLoginEmailChange} onPasswordChange={this.handleLoginPasswordChange} onLogin={this.handleLogin} onFocus={this.handleLoginFocus} onBlur={this.handleLoginBlur} />
+                        <LoginForm username={this.state.loginUsername} password={this.state.loginPassword} onUsernameChange={this.handleLoginUsernameChange} onPasswordChange={this.handleLoginPasswordChange} onLogin={this.handleLogin} onFocus={this.handleLoginFocus} onBlur={this.handleLoginBlur} />
                     </div>
                     <div>
                         <h1>Sign up</h1>
-                        <SignUpForm email={this.state.signUpEmail} password={this.state.signUpPassword} passwordconf={this.state.signUpPasswordConf} onEmailChange={this.handleSignUpEmailChange} onPasswordChange={this.handleSignUpPasswordChange} onPasswordConfChange={this.handleSignUpPasswordConfChange} onSignUp={this.handleSignUp} onFocus={this.handleSignUpFocus} onBlur={this.handleSignUpBlur} />
+                        <SignUpForm email={this.state.signUpEmail} password={this.state.signUpPassword} passwordconf={this.state.signUpPasswordConf} onUsernameChange={this.handleSignUpUsernameChange} onEmailChange={this.handleSignUpEmailChange} onPasswordChange={this.handleSignUpPasswordChange} onPasswordConfChange={this.handleSignUpPasswordConfChange} onSignUp={this.handleSignUp} onFocus={this.handleSignUpFocus} onBlur={this.handleSignUpBlur} />
                     </div>
                 </div>
             </div>

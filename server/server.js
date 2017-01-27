@@ -23,9 +23,9 @@ io.on('connection', function(socket)
     socket.join('default-filter');
     
     //Login page events
-    socket.on('signUp', function(email, password)
+    socket.on('signUp', function(username, email, password)
     {
-        Users.makeAccount(database, email, password, function(success, id)
+        Users.makeAccount(database, username, email, password, function(success, id)
         {
             if(success)
             {
@@ -51,9 +51,9 @@ io.on('connection', function(socket)
         });
     });
     
-    socket.on('login', function(email, password)
+    socket.on('login', function(username, password)
     {
-        Users.login(database, email, password, function(success, id)
+        Users.login(database, username, password, function(success, id)
         {
             if(success)
             {
@@ -76,7 +76,7 @@ io.on('connection', function(socket)
             }
             else
             {
-                console.log('Login for email ' + email + ' failed.');
+                console.log('Login for username ' + username + ' failed.');
             }
         });
     });
@@ -188,11 +188,6 @@ io.on('connection', function(socket)
         }
     });
     
-    socket.on('privateMsg', function(from, to, message)
-    {
-        console.log(from, to, message);
-    });
-    
     socket.on('getFilters', function()
     {
         //Get my lat and long
@@ -294,7 +289,7 @@ io.on('connection', function(socket)
                             {
                                 Users.findUsername(database, users[j].userId, function(success, username)
                                 {
-                                    if(username && names.length < 10)
+                                    if(username && names.length < 10 && users[j].socketId != socket.id)
                                     {
                                         names.push(username);
                                     }

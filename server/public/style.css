@@ -145,7 +145,7 @@ input
 {
     background-color: #d7d7d7;
 }
-#messageList li.privateMsg !important
+#messageList li.privateMsg
 {
     background-color: #ea728a;
 }

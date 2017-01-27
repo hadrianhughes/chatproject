@@ -2,11 +2,12 @@ const ObjectId = require('mongodb').ObjectID;
 
 let Users = {};
 
-Users.makeAccount = function(db, email, password, callback)
+Users.makeAccount = function(db, username, email, password, callback)
 {
     try
     {
         db.collection('users').save({
+            "username" : username,
             "email" : email,
             "password" : password
         }, function(err)
@@ -54,12 +55,12 @@ Users.makeAccount = function(db, email, password, callback)
     }
 };
 
-Users.login = function(db, email, password, callback)
+Users.login = function(db, username, password, callback)
 {
     try
     {
         db.collection('users').findOne({
-            "email" : email,
+            "username" : username,
             "password" : password
         }, function(err, doc)
         {
@@ -135,7 +136,7 @@ Users.findUsername = function(db, id, callback)
             {
                 if(doc)
                 {
-                    callback(true, doc.email);
+                    callback(true, doc.username);
                 }
                 else
                 {
@@ -156,7 +157,7 @@ Users.findUserId = function(db, username, callback)
     try
     {
         db.collection('users').findOne({
-            "email" : username
+            "username" : username
         }, function(err, doc)
         {
             if(err)

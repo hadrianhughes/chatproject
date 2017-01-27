@@ -12,7 +12,6 @@ export default class MessageList extends React.Component
         
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
-        this.handleMsgClick = this.handleMsgClick.bind(this);
     }
     
     componentDidUpdate()
@@ -33,11 +32,6 @@ export default class MessageList extends React.Component
         this.setState({
             mouseDown: false
         });
-    }
-    
-    handleMsgClick()
-    {
-        console.log('clicked message');
     }
     
     render()
@@ -75,7 +69,8 @@ export default class MessageList extends React.Component
             }
         }
         
-        const listContent = newList.map((item) => <li key={item.key} className={item.priv ? "privateMsg" : null, item.mentioned ? "mentionedMsg" : null} style={{ textAlign: item.user == this.props.username ? 'right' : 'left'}} dangerouslySetInnerHTML={{__html: item.text}} onClick={(e) => this.props.onMsgClick(e, item.user)}></li>);
+        newList.map(function(item){ console.log('Priv: ' + item.priv); });
+        const listContent = newList.map((item) => <li key={item.key} className={item.priv ? "privateMsg" : null + item.mentioned ? "mentionedMsg" : null} style={{ textAlign: item.user == this.props.username ? 'right' : 'left'}} dangerouslySetInnerHTML={{__html: item.text}} onContextMenu={(e) => this.props.onMsgClick(e, item.user)}></li>);
         
         return(
             <ul id="messageList" onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
